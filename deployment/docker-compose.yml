@@ -1,0 +1,31 @@
+version: "3"
+
+name: tracky
+services:
+  backend:
+    image: msdeluise/tracky-backend:1.0.0
+    env_file: backend.env
+    depends_on:
+      - db
+    restart: unless-stopped
+
+  db:
+    image: mysql:8.0
+    restart: always
+    env_file: backend.env
+
+  frontend:
+    image: msdeluise/tracky-frontend:1.0.0
+    env_file: frontend.env
+    links:
+      - backend
+
+  reverse-proxy:
+    image: nginx:stable-alpine
+    ports:
+      - "8080:80"
+    volumes:
+      - ./default.conf:/etc/nginx/conf.d/default.conf
+    links:
+      - backend
+      - frontend
