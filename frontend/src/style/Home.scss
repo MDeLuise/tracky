@@ -1,0 +1,20 @@
+@media only screen and (max-width: 1357px) {
+    #outer-flex, #inner-flex {
+      flex-direction: column;
+      overflow: "auto";
+      min-width: none;
+    }
+
+    #inner-flex {
+        width: 90%;
+        display: "table";
+        table-layout: "fixed";
+        margin: "0 auto";
+        min-width: none;
+        gap: 20px;
+
+        table {
+            min-width: initial;
+        }
+    }
+  }

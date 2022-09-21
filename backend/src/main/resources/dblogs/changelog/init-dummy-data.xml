@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.1.xsd">
+
+    <property name="now" value="sysdate" dbms="oracle"/>
+    <property name="now" value="now()" dbms="mysql"/>
+    <property name="now" value="now()" dbms="h2"/>
+    <property name="now" value="now()" dbms="postgresql"/>
+
+
+    <changeSet id="insertTracker" author="MDeLuise">
+        <insert tableName="trackers">
+            <column name="id" value="99"/>
+            <column name="name" value="GPL price"/>
+            <column name="unit" value="€/L"/>
+            <column name="user_id" value="99"/>
+            <column name="last_observation_on" value="${now}"/>
+        </insert>
+        <insert tableName="trackers">
+            <column name="id" value="98"/>
+            <column name="name" value="Car mileage"/>
+            <column name="unit" value="Km"/>
+            <column name="user_id" value="99"/>
+            <column name="last_observation_on" value="${now}"/>
+        </insert>
+    </changeSet>
+
+
+    <changeSet id="insertObservations" author="MDeLuise">
+        <insert tableName="observations">
+            <column name="id" value="99"/>
+            <column name="tracker_id" value="99"/>
+            <column name="instant" value="${now}"/>
+            <column name="observation_value" value="0.788"/>
+            <column name="user_id" value="99"/>
+        </insert>
+        <insert tableName="observations">
+            <column name="id" value="98"/>
+            <column name="tracker_id" value="99"/>
+            <column name="instant" value="${now}"/>
+            <column name="observation_value" value="0.765"/>
+            <column name="user_id" value="99"/>
+        </insert>
+        <insert tableName="observations">
+            <column name="id" value="97"/>
+            <column name="tracker_id" value="98"/>
+            <column name="instant" value="${now}"/>
+            <column name="observation_value" value="120123"/>
+            <column name="user_id" value="99"/>
+        </insert>
+        <insert tableName="observations">
+            <column name="id" value="96"/>
+            <column name="tracker_id" value="98"/>
+            <column name="instant" value="${now}"/>
+            <column name="observation_value" value="120201"/>
+            <column name="user_id" value="99"/>
+        </insert>
+    </changeSet>
+
+</databaseChangeLog>

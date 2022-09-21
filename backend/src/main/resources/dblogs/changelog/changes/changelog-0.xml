@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.1.xsd">
+
+    <changeSet id="createUserTable" author="MDeLuise">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="application_users"/>
+            </not>
+        </preConditions>
+        <createTable tableName="application_users">
+            <column name="id" type="bigint">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="username" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="password" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+
+    <changeSet id="createTrackerTable" author="MDeLuise">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="trackers"/>
+            </not>
+        </preConditions>
+        <createTable tableName="trackers">
+            <column name="id" type="bigint">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="name" type="varchar(40)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="varchar(150)"/>
+            <column name="unit" type="varchar(10)"/>
+            <column name="user_id" type="bigint">
+                <constraints nullable="false" foreignKeyName="fk_tracker_user" references="application_users(id)"/>
+            </column>
+            <column name="last_observation_on" type="datetime">
+            </column>
+        </createTable>
+        <addUniqueConstraint
+                columnNames="name, user_id"
+                constraintName="tracker_name_unique"
+                tableName="trackers"
+        />
+    </changeSet>
+
+
+    <changeSet id="createObservationTable" author="MDeLuise">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="observations"/>
+            </not>
+        </preConditions>
+        <createTable tableName="observations">
+            <column name="id" type="bigint">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="tracker_id" type="bigint">
+                <constraints nullable="false" foreignKeyName="fk_observation_tracker" references="trackers(id)"/>
+            </column>
+            <column name="instant" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="observation_value" type="float">
+                <constraints nullable="false"/>
+            </column>
+            <column name="note" type="varchar(150)">
+            </column>
+            <column name="user_id" type="bigint">
+                <constraints nullable="false" foreignKeyName="fk_observation_user" references="application_users(id)"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+
+    <changeSet id="createApiKeyTable" author="MDeLuise">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="api_keys"/>
+            </not>
+        </preConditions>
+        <createTable tableName="api_keys">
+            <column name="id" type="bigint">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="user_id" type="bigint">
+                <constraints nullable="false" foreignKeyName="fk_apiKey_user" references="application_users(id)"/>
+            </column>
+            <column name="api_key_value" type="varchar(255)">
+                <constraints unique="true"/>
+            </column>
+            <column name="name" type="varchar(255)">
+            </column>
+            <column name="created_on" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addUniqueConstraint
+                columnNames="user_id, name"
+                constraintName="api_key_name_unique"
+                tableName="api_keys"
+        />
+    </changeSet>
+
+</databaseChangeLog>

@@ -1,0 +1,38 @@
+version: "3"
+name: tracky
+services:
+  backend:
+    image: msdeluise/tracky-backend:latest
+    env_file: backend.env
+    depends_on:
+      - db
+    restart: unless-stopped
+    volumes:
+      - "certs:/certificates"
+    ports:
+      - "8080:8080"
+
+  db:
+    image: mysql:8.0
+    restart: always
+    env_file: backend.env
+    volumes:
+      - "./db:/var/lib/mysql"
+
+  frontend:
+    image: msdeluise/tracky-frontend:latest
+    env_file: frontend.env
+    links:
+      - backend
+    ports:
+      - "3000:3000"
+    volumes:
+      - "certs:/certificates"
+
+volumes:
+  certs:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./certificates
