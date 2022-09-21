@@ -1,0 +1,40 @@
+[[scenario]]
+name = "load test data"
+
+  [[scenario.table]]
+    name = "targets"
+
+    [[scenario.table.row]]
+      id = "<%= uuid() %>"
+      name = "target 0"
+      description = "description of target 0"
+      created_at = "<%= now() %>"
+      updated_at = "<%= now() %>"
+
+    [[scenario.table.row]]
+      id = "c6e6ee74-1fb8-433e-a677-9befe3f2856a"
+      name = "target 1"
+      description = "description of target 1"
+      created_at = "<%= now() %>"
+      updated_at = "<%= now() %>"
+
+  [[scenario.table]]
+    name = "users"
+
+    [[scenario.table.row]]
+      id = "<%= uuid() %>"
+      username = "admin"
+      password = "$2a$10$CcUb8tc6PTqG/i4DYwmY8etSSua4HqJnlJOkkbMEnGWv5L5ltitwG"
+      created_at = "<%= now() %>"
+      updated_at = "<%= now() %>"
+
+  [[scenario.table]]
+    name = "observations"
+
+    [[scenario.table.row]]
+      id = "<%= uuid() %>"
+      value = 42.42
+      time = "<%= now() %>"
+      target_id = "c6e6ee74-1fb8-433e-a677-9befe3f2856a"
+      created_at = "<%= now() %>"
+      updated_at = "<%= now() %>"

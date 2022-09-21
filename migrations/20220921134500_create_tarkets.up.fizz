@@ -1,0 +1,5 @@
+create_table("targets") {
+  t.Column("id", "uuid", {primary: true})
+  t.Column("name", "string", {"size": 10})
+  t.Column("description", "string", {"size": 50})
+}
