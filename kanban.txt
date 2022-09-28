@@ -1,10 +1,10 @@
 TODO:
     - refresh token
-    - gobuffalo resource for model
     - test (target delete ONLY linked observations)
 IN PROGRESS:
-    - parse time in json observation (ISO_8601)
 DONE:
+    - gobuffalo resource for model
+    - parse time in json observation (ISO_8601)
     - date in observation
     - error response data empty
     - tests

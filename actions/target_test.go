@@ -8,15 +8,15 @@ import (
 	"github.com/gofrs/uuid"
 )
 
-const targetBaseURL = "/target/"
+const targetBaseURL = "/target"
 
 func (as *ActionSuite) Test_TargetEndpointShouldBeAuthenticated() {
 	var responses = make([]*httptest.JSONResponse, 0)
 	responses = append(responses, as.JSON(targetBaseURL).Get())
-	responses = append(responses, as.JSON(targetBaseURL+"42").Get())
+	responses = append(responses, as.JSON(targetBaseURL+"/42").Get())
 	responses = append(responses, as.JSON(targetBaseURL).Post(nil))
-	responses = append(responses, as.JSON(targetBaseURL+"42").Delete())
-	responses = append(responses, as.JSON(targetBaseURL+"42").Put(nil))
+	responses = append(responses, as.JSON(targetBaseURL+"/42").Delete())
+	responses = append(responses, as.JSON(targetBaseURL+"/42").Put(nil))
 
 	for _, res := range responses {
 		as.Equal(401, res.Code)
@@ -61,7 +61,7 @@ func (as *ActionSuite) Test_TargetPostLegal() {
 		as.Fail(err.Error())
 	}
 
-	req = as.JSON(targetBaseURL + resData["id"].(string))
+	req = as.JSON(appendAtBaseURL(targetBaseURL, resData["id"].(string)))
 	req.Headers = headers
 	as.Equal(200, req.Get().Code)
 }
@@ -86,7 +86,7 @@ func (as *ActionSuite) Test_TargetPostWithEmptyName() {
 	as.Equal(400, res.Code)
 }
 
-func (as *ActionSuite) Test_TargetDeleteLegal() {
+func (as *ActionSuite) Test_TargetDestroyLegal() {
 	token, err := getLoginToken(as)
 	if err != nil {
 		as.Fail(err.Error())
@@ -110,12 +110,12 @@ func (as *ActionSuite) Test_TargetDeleteLegal() {
 		as.Fail(err.Error())
 	}
 
-	req = as.JSON(targetBaseURL + resData["id"].(string))
+	req = as.JSON(appendAtBaseURL(targetBaseURL, resData["id"].(string)))
 	req.Headers = headers
 	as.Equal(200, req.Delete().Code)
 }
 
-func (as *ActionSuite) Test_TargetDeleteNotExisting() {
+func (as *ActionSuite) Test_TargetDestroyNotExisting() {
 	token, err := getLoginToken(as)
 	if err != nil {
 		as.Fail(err.Error())
@@ -127,12 +127,12 @@ func (as *ActionSuite) Test_TargetDeleteNotExisting() {
 	if err != nil {
 		as.Fail(err.Error())
 	}
-	req := as.JSON(targetBaseURL + fakeID.String())
+	req := as.JSON(appendAtBaseURL(targetBaseURL, fakeID.String()))
 	req.Headers = headers
 	as.Equal(404, req.Delete().Code)
 }
 
-func (as *ActionSuite) Test_TargetDeleteAlsoDeleteLinkedObservations() {
+func (as *ActionSuite) Test_TargetDestroyAlsoDeleteLinkedObservations() {
 	token, err := getLoginToken(as)
 	if err != nil {
 		as.Fail(err.Error())
@@ -172,11 +172,11 @@ func (as *ActionSuite) Test_TargetDeleteAlsoDeleteLinkedObservations() {
 		as.Fail(err.Error())
 	}
 	observationID := resData["id"].(string)
-	req = as.JSON(targetBaseURL + targetID)
+	req = as.JSON(appendAtBaseURL(targetBaseURL, targetID))
 	req.Headers = headers
 	as.Equal(200, req.Delete().Code)
 
-	req = as.JSON(observationBaseURL + observationID)
+	req = as.JSON(appendAtBaseURL(observationBaseURL, observationID))
 	req.Headers = headers
 
 	as.Equal(http.StatusNotFound, req.Get().Code)
@@ -206,7 +206,7 @@ func (as *ActionSuite) Test_TargetUpdateLegal() {
 		as.Fail(err.Error())
 	}
 
-	req = as.JSON(targetBaseURL + resData["id"].(string))
+	req = as.JSON(appendAtBaseURL(targetBaseURL, resData["id"].(string)))
 	req.Headers = headers
 	res = req.Put(&struct {
 		Name        string
@@ -242,7 +242,7 @@ func (as *ActionSuite) Test_TargetUpdateWithEmptyName() {
 		as.Fail(err.Error())
 	}
 
-	req = as.JSON(targetBaseURL + resData["id"].(string))
+	req = as.JSON(appendAtBaseURL(targetBaseURL, resData["id"].(string)))
 	req.Headers = headers
 	res = req.Put(&struct {
 		Name        string
@@ -266,7 +266,7 @@ func (as *ActionSuite) Test_TargetUpdateNonExisting() {
 	if err != nil {
 		as.Fail(err.Error())
 	}
-	req := as.JSON(targetBaseURL + fakeID.String())
+	req := as.JSON(appendAtBaseURL(targetBaseURL, fakeID.String()))
 	req.Headers = headers
 	res := req.Put(&struct {
 		Name        string

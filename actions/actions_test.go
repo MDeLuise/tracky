@@ -63,3 +63,7 @@ func getResponseDataArray(res *httptest.JSONResponse) ([]map[string]interface{},
 	}
 	return toReturn, nil
 }
+
+func appendAtBaseURL(baseURL, param string) string {
+	return baseURL + "/" + param
+}

@@ -12,7 +12,9 @@ import (
 	"github.com/gobuffalo/buffalo"
 )
 
-func TargetIndex(c buffalo.Context) error {
+type TargetResource struct{}
+
+func (t TargetResource) List(c buffalo.Context) error {
 	target := []models.Target{}
 	err := models.DB.All(&target)
 	if err != nil {
@@ -22,8 +24,8 @@ func TargetIndex(c buffalo.Context) error {
 	return response.SendOKResponse(c, target)
 }
 
-func TargetShow(c buffalo.Context) error {
-	id := c.Param("id")
+func (t TargetResource) Show(c buffalo.Context) error {
+	id := c.Param("target_id")
 	target := models.Target{}
 	err := models.DB.Find(&target, id)
 	if err != nil {
@@ -33,7 +35,7 @@ func TargetShow(c buffalo.Context) error {
 	return response.SendOKResponse(c, &target)
 }
 
-func TargetAdd(c buffalo.Context) error {
+func (t TargetResource) Create(c buffalo.Context) error {
 	body, err := io.ReadAll(c.Request().Body)
 	if err != nil {
 		log.SysLog.WithField("err", err).Error("Error reading body")
@@ -44,17 +46,17 @@ func TargetAdd(c buffalo.Context) error {
 	vErr, err := models.DB.ValidateAndCreate(target)
 	if err != nil {
 		log.SysLog.WithField("err", err).Error("entity not valid")
-		return response.SendError(c, http.StatusBadRequest , err)
+		return response.SendError(c, http.StatusBadRequest, err)
 	}
 	if vErr.HasAny() {
 		log.SysLog.WithField("vErr", vErr.Errors).Error("entity not valid")
-		return response.SendError(c, http.StatusBadRequest , vErr)
+		return response.SendError(c, http.StatusBadRequest, vErr)
 	}
 	return response.SendOKResponse(c, target)
 }
 
-func TargetDelete(c buffalo.Context) error {
-	id := c.Param("id")
+func (t TargetResource) Destroy(c buffalo.Context) error {
+	id := c.Param("target_id")
 	target := &models.Target{}
 	if err := models.DB.Find(target, id); err != nil {
 		return response.SendError(c, http.StatusNotFound, err)
@@ -65,8 +67,8 @@ func TargetDelete(c buffalo.Context) error {
 	return response.SendOKResponse(c, nil)
 }
 
-func TargetUpdate(c buffalo.Context) error {
-	id := c.Param("id")
+func (t TargetResource) Update(c buffalo.Context) error {
+	id := c.Param("target_id")
 	body, err := io.ReadAll(c.Request().Body)
 	if err != nil {
 		log.SysLog.WithField("err", err).Error("cannot read body")

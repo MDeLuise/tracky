@@ -9,15 +9,15 @@ import (
 	"github.com/gofrs/uuid"
 )
 
-const observationBaseURL = "/value/"
+const observationBaseURL = "/value"
 
 func (as *ActionSuite) Test_ObservationEndpointShouldBeAuthenticated() {
 	var responses = make([]*httptest.JSONResponse, 0)
 	responses = append(responses, as.JSON(observationBaseURL).Get())
-	responses = append(responses, as.JSON(observationBaseURL+"42").Get())
+	responses = append(responses, as.JSON(observationBaseURL+"/42").Get())
 	responses = append(responses, as.JSON(observationBaseURL).Post(nil))
-	responses = append(responses, as.JSON(observationBaseURL+"42").Delete())
-	responses = append(responses, as.JSON(observationBaseURL+"42").Put(nil))
+	responses = append(responses, as.JSON(observationBaseURL+"/42").Delete())
+	responses = append(responses, as.JSON(observationBaseURL+"/42").Put(nil))
 
 	for _, res := range responses {
 		as.Equal(401, res.Code)
@@ -90,7 +90,7 @@ func (as *ActionSuite) Test_ObservationPostNotExistingTarget() {
 	as.Equal(400, res.Code)
 }
 
-func (as *ActionSuite) Test_ObservationDeleteLegal() {
+func (as *ActionSuite) Test_ObservationDestroyLegal() {
 	token, err := getLoginToken(as)
 	if err != nil {
 		as.Fail(err.Error())
@@ -120,12 +120,12 @@ func (as *ActionSuite) Test_ObservationDeleteLegal() {
 		as.Fail(err.Error())
 	}
 	observationID := data["id"].(string)
-	req = as.JSON(observationBaseURL + observationID)
+	req = as.JSON(appendAtBaseURL(observationBaseURL, observationID))
 	req.Headers = headers
 	as.Equal(http.StatusOK, req.Delete().Code)
 }
 
-func (as *ActionSuite) Test_ObservationDeleteNotExisting() {
+func (as *ActionSuite) Test_ObservationDestroyNotExisting() {
 	token, err := getLoginToken(as)
 	if err != nil {
 		as.Fail(err.Error())
@@ -154,7 +154,7 @@ func (as *ActionSuite) Test_ObservationUpdateNonExisting() {
 	if err != nil {
 		as.Fail(err.Error())
 	}
-	req := as.JSON(observationBaseURL + fakeID.String())
+	req := as.JSON(appendAtBaseURL(observationBaseURL, fakeID.String()))
 	req.Headers = headers
 	res := req.Put(&struct {
 		Value     float64
@@ -197,7 +197,7 @@ func (as *ActionSuite) Test_ObservationUpdateLegal() {
 		as.Fail(err.Error())
 	}
 	observationID := data["id"].(string)
-	req = as.JSON(observationBaseURL + observationID)
+	req = as.JSON(appendAtBaseURL(observationBaseURL, observationID))
 	req.Headers = headers
 	res = req.Put(&struct {
 		Value     float64
@@ -242,7 +242,7 @@ func (as *ActionSuite) Test_ObservationUpdateNotExistingTarget() {
 	if err != nil {
 		as.Fail(err.Error())
 	}
-	req = as.JSON(observationBaseURL + observationID)
+	req = as.JSON(appendAtBaseURL(observationBaseURL, observationID))
 	req.Headers = headers
 	res = req.Put(&struct {
 		Value     float64

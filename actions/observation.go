@@ -12,7 +12,9 @@ import (
 	"github.com/gofrs/uuid"
 )
 
-func ObservationIndex(c buffalo.Context) error {
+type ObservationResource struct{}
+
+func (o ObservationResource) List(c buffalo.Context) error {
 	observation := []models.Observation{}
 	err := models.DB.All(&observation)
 	if err != nil {
@@ -22,8 +24,8 @@ func ObservationIndex(c buffalo.Context) error {
 	return response.SendOKResponse(c, observation)
 }
 
-func ObservationShow(c buffalo.Context) error {
-	id := c.Param("id")
+func (o ObservationResource) Show(c buffalo.Context) error {
+	id := c.Param("observation_id")
 	observation := models.Observation{}
 	err := models.DB.Find(&observation, id)
 	if err != nil {
@@ -33,7 +35,7 @@ func ObservationShow(c buffalo.Context) error {
 	return response.SendOKResponse(c, &observation)
 }
 
-func ObservationCreate(c buffalo.Context) error {
+func (o ObservationResource) Create(c buffalo.Context) error {
 	body, err := io.ReadAll(c.Request().Body)
 	if err != nil {
 		log.SysLog.WithField("err", err).Error("cannot read body")
@@ -48,17 +50,17 @@ func ObservationCreate(c buffalo.Context) error {
 	vErr, err := models.DB.Eager().ValidateAndCreate(observation)
 	if err != nil {
 		log.SysLog.WithField("err", err).Error("entity not valid")
-		return response.SendError(c, http.StatusBadRequest , err)
+		return response.SendError(c, http.StatusBadRequest, err)
 	}
 	if vErr.HasAny() {
 		log.SysLog.WithField("vErr", vErr).Error("entity not valid")
-		return response.SendError(c, http.StatusBadRequest , vErr)
+		return response.SendError(c, http.StatusBadRequest, vErr)
 	}
 	return response.SendOKResponse(c, observation)
 }
 
-func ObservationDelete(c buffalo.Context) error {
-	id := c.Param("id")
+func (o ObservationResource) Destroy(c buffalo.Context) error {
+	id := c.Param("observation_id")
 	observation := &models.Observation{}
 	if err := models.DB.Find(observation, id); err != nil {
 		log.SysLog.WithField("err", err).Error("cannot find entity with id")
@@ -71,8 +73,8 @@ func ObservationDelete(c buffalo.Context) error {
 	return c.Render(http.StatusOK, r.JSON("ok"))
 }
 
-func ObservationUpdate(c buffalo.Context) error {
-	id := c.Param("id")
+func (o ObservationResource) Update(c buffalo.Context) error {
+	id := c.Param("observation_id")
 	body, err := io.ReadAll(c.Request().Body)
 	if err != nil {
 		log.SysLog.WithField("err", err).Error("cannot read body")

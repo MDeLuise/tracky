@@ -74,25 +74,9 @@ func App() *buffalo.App {
 		// Disable Auth Middleware in these fuctions
 		app.Middleware.Skip(AuthMiddleware, AuthLogin, UsersCreate)
 
-		t := app.Group("/target")
-		t.GET("/", TargetIndex)
-		t.GET("/{id}", TargetShow)
-		t.POST("/", TargetAdd)
-		t.DELETE("/{id}", TargetDelete)
-		t.PUT("/{id}", TargetUpdate)
+		app.Resource("/target", TargetResource{})
+		app.Resource("/value", ObservationResource{})
 
-		v := app.Group("/value")
-		v.GET("/", ObservationIndex)
-		v.GET("/{id}", ObservationShow)
-		v.POST("/", ObservationCreate)
-		v.DELETE("/{id}", ObservationDelete)
-		v.PUT("/{id}", ObservationUpdate)
-		
-		u := app.Group("/user")
-		u.POST("/", UsersCreate)
-		u.GET("/", UsersRead)
-		u.GET("/{id}", UsersReadByID)
-		
 		a := app.Group("/auth")
 		a.POST("/login", AuthLogin)
 	}
