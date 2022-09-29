@@ -1,8 +1,8 @@
 package services
 
 import (
-	"tracky_go/log"
-	"tracky_go/models"
+	"tracky/log"
+	"tracky/models"
 )
 
 func GetAllObservation(Observation *models.Observations) error {

@@ -5,7 +5,7 @@ import (
 	"os"
 	"strconv"
 	"time"
-	"tracky_go/log"
+	"tracky/log"
 
 	"github.com/golang-jwt/jwt/v4"
 )

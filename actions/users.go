@@ -4,9 +4,9 @@ import (
 	"encoding/json"
 	"io"
 
-	"tracky_go/log"
-	"tracky_go/models"
-	"tracky_go/response"
+	"tracky/log"
+	"tracky/models"
+	"tracky/response"
 
 	"github.com/gobuffalo/buffalo"
 	"github.com/gofrs/uuid"

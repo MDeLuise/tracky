@@ -3,7 +3,7 @@ package main
 import (
 	"log"
 
-	"tracky_go/actions"
+	"tracky/actions"
 )
 
 // main is the starting point for your Buffalo application.

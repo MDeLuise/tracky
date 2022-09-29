@@ -1,7 +1,7 @@
 package grifts
 
 import (
-	"tracky_go/actions"
+	"tracky/actions"
 
 	"github.com/gobuffalo/buffalo"
 )

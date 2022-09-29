@@ -1,8 +1,8 @@
 package actions
 
 import (
-	"tracky_go/locales"
-	"tracky_go/models"
+	"tracky/locales"
+	"tracky/models"
 
 	"github.com/gobuffalo/buffalo"
 	"github.com/gobuffalo/buffalo-pop/v3/pop/popmw"
@@ -47,7 +47,7 @@ func App() *buffalo.App {
 			PreWares: []buffalo.PreWare{
 				cors.Default().Handler,
 			},
-			SessionName: "_tracky_go_session",
+			SessionName: "_tracky_session",
 		})
 
 		// Automatically redirect to SSL

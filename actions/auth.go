@@ -2,10 +2,10 @@ package actions
 
 import (
 	"fmt"
-	"tracky_go/log"
-	"tracky_go/models"
-	"tracky_go/response"
-	"tracky_go/services"
+	"tracky/log"
+	"tracky/models"
+	"tracky/response"
+	"tracky/services"
 
 	"github.com/gobuffalo/buffalo"
 	"golang.org/x/crypto/bcrypt"

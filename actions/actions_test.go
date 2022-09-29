@@ -6,7 +6,7 @@ import (
 	"os"
 	"strconv"
 	"testing"
-	"tracky_go/response"
+	"tracky/response"
 
 	"github.com/gobuffalo/httptest"
 	"github.com/gobuffalo/suite/v4"

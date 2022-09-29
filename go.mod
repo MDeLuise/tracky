@@ -1,4 +1,4 @@
-module tracky_go
+module tracky
 
 go 1.19
 

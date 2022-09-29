@@ -4,10 +4,10 @@ import (
 	"encoding/json"
 	"io"
 	"net/http"
-	"tracky_go/log"
-	"tracky_go/models"
-	"tracky_go/response"
-	"tracky_go/services"
+	"tracky/log"
+	"tracky/models"
+	"tracky/response"
+	"tracky/services"
 
 	"github.com/gobuffalo/buffalo"
 )

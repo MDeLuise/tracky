@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"tracky_go/log"
+	"tracky/log"
 
 	"github.com/gobuffalo/pop/v6"
 	"github.com/gobuffalo/validate/v3"
