@@ -2,7 +2,6 @@ package actions
 
 import (
 	"fmt"
-	"net/http"
 	"os"
 	"strconv"
 	"time"
@@ -19,16 +18,15 @@ func AuthLogin(c buffalo.Context) error {
 	user := &models.User{}
 	if err := c.Bind(user); err != nil {
 		log.SysLog.WithField("err", err).Error("error processing request")
-		return response.SendGeneralError(c, err)
+		return response.SendBadRequestError(c, err)
 	}
 
 	username := user.Username
 	password := user.Password
 	if username == "" || password == "" {
 		log.SysLog.Error("username or password empty")
-		return response.SendError(
+		return response.SendBadRequestError(
 			c,
-			http.StatusBadRequest,
 			fmt.Errorf("username and password cannot be empty"),
 		)
 	}
@@ -36,6 +34,7 @@ func AuthLogin(c buffalo.Context) error {
 	q := models.DB.Select("id, username, password").Where("username = ?", username)
 	err := q.First(user)
 	if err != nil {
+		log.SysLog.WithField("err", err).Error("error while searching in DB")
 		return response.SendGeneralError(c, err)
 	}
 
@@ -43,9 +42,8 @@ func AuthLogin(c buffalo.Context) error {
 	err = bcrypt.CompareHashAndPassword([]byte(PasswordHash), []byte(password))
 	if err != nil {
 		log.SysLog.Error("invalid username or password")
-		return response.SendError(
+		return response.SendUnauthorizedError(
 			c,
-			http.StatusUnauthorized,
 			fmt.Errorf("invalid username or password"),
 		)
 	}
@@ -71,7 +69,7 @@ func AuthRefresh(c buffalo.Context) error {
 	refreshSecret := os.Getenv("JWT_REFRESH_SECRET")
 	if err := c.Bind(usedRefreshToken); err != nil {
 		log.SysLog.WithField("err", err).Error("error processing request")
-		return response.SendGeneralError(c, err)
+		return response.SendBadRequestError(c, err)
 	}
 
 	token, err := jwt.Parse(usedRefreshToken.RefreshToken,
@@ -85,10 +83,10 @@ func AuthRefresh(c buffalo.Context) error {
 		})
 	if err != nil {
 		log.SysLog.WithField("err", err).Error("error parsing token")
-		return response.SendGeneralError(c, err)
+		return response.SendBadRequestError(c, err)
 	} else if !token.Valid {
 		log.SysLog.Error("token not valid")
-		return response.SendGeneralError(c, fmt.Errorf("token not valid"))
+		return response.SendBadRequestError(c, fmt.Errorf("token not valid"))
 	}
 
 	claims, ok := token.Claims.(jwt.MapClaims)
@@ -97,7 +95,7 @@ func AuthRefresh(c buffalo.Context) error {
 		return response.SendGeneralError(c, fmt.Errorf("error parsing token claims"))
 	} else if !claims["refresh"].(bool) {
 		log.SysLog.Error("token is not a refresh token")
-		return response.SendGeneralError(c, fmt.Errorf("token is not a refresh token"))
+		return response.SendBadRequestError(c, fmt.Errorf("token is not a refresh token"))
 	}
 	userID := claims["id"].(string)
 	newToken, err := createAccessToken(userID)
@@ -118,7 +116,7 @@ func createAccessToken(userID string) (string, error) {
 	secret := os.Getenv("JWT_SECRET")
 	expirationHour, err := strconv.Atoi(os.Getenv("ACCESS_TOKEN_EXPIRATION_HOUR"))
 	if err != nil {
-		return "", err 
+		return "", err
 	}
 	expiration := time.Now().Add(time.Hour * time.Duration(expirationHour)).Unix()
 	return createToken(userID, secret, false, expiration)
@@ -128,7 +126,7 @@ func createRefreshToken(userID string) (string, error) {
 	secret := os.Getenv("JWT_REFRESH_SECRET")
 	expirationHour, err := strconv.Atoi(os.Getenv("REFRESH_TOKEN_EXPIRATION_HOUR"))
 	if err != nil {
-		return "", err 
+		return "", err
 	}
 	expiration := time.Now().Add(time.Hour * time.Duration(expirationHour)).Unix()
 	return createToken(userID, secret, true, expiration)

@@ -30,7 +30,7 @@ func (o ObservationResource) Show(c buffalo.Context) error {
 	err := models.DB.Find(&observation, id)
 	if err != nil {
 		log.SysLog.WithField("err", err).Error("cannot find entity")
-		return response.SendError(c, http.StatusNotFound, err)
+		return response.SendNotFoundError(c, err)
 	}
 	return response.SendOKResponse(c, &observation)
 }
@@ -39,22 +39,22 @@ func (o ObservationResource) Create(c buffalo.Context) error {
 	body, err := io.ReadAll(c.Request().Body)
 	if err != nil {
 		log.SysLog.WithField("err", err).Error("cannot read body")
-		return response.SendGeneralError(c, err)
+		return response.SendBadRequestError(c, err)
 	}
 	observation := &models.Observation{}
 	err = json.Unmarshal([]byte(body), observation)
 	if err != nil {
 		log.SysLog.WithField("err", err).Error("cannot unmarshal entity")
-		return response.SendGeneralError(c, err)
+		return response.SendBadRequestError(c, err)
 	}
 	vErr, err := models.DB.Eager().ValidateAndCreate(observation)
 	if err != nil {
 		log.SysLog.WithField("err", err).Error("entity not valid")
-		return response.SendError(c, http.StatusBadRequest, err)
+		return response.SendBadRequestError(c, err)
 	}
 	if vErr.HasAny() {
 		log.SysLog.WithField("vErr", vErr).Error("entity not valid")
-		return response.SendError(c, http.StatusBadRequest, vErr)
+		return response.SendBadRequestError(c, vErr)
 	}
 	return response.SendOKResponse(c, observation)
 }
@@ -64,7 +64,7 @@ func (o ObservationResource) Destroy(c buffalo.Context) error {
 	observation := &models.Observation{}
 	if err := models.DB.Find(observation, id); err != nil {
 		log.SysLog.WithField("err", err).Error("cannot find entity with id")
-		return response.SendError(c, http.StatusNotFound, err)
+		return response.SendNotFoundError(c, err)
 	}
 	if err := models.DB.Destroy(observation); err != nil {
 		log.SysLog.WithField("err", err).Error("error while destroying entity")
@@ -78,17 +78,17 @@ func (o ObservationResource) Update(c buffalo.Context) error {
 	body, err := io.ReadAll(c.Request().Body)
 	if err != nil {
 		log.SysLog.WithField("err", err).Error("cannot read body")
-		return response.SendGeneralError(c, err)
+		return response.SendBadRequestError(c, err)
 	}
 	observationToUpdate := &models.Observation{}
 	if err := models.DB.Find(observationToUpdate, id); err != nil {
 		log.SysLog.WithField("err", err).Error("cannot find entity")
-		return response.SendError(c, http.StatusNotFound, err)
+		return response.SendNotFoundError(c, err)
 	}
 	observation := &models.Observation{}
 	if err = json.Unmarshal([]byte(body), observation); err != nil {
 		log.SysLog.WithField("err", err).Error("cannot unmarshal json")
-		return response.SendError(c, http.StatusNotFound, err)
+		return response.SendBadRequestError(c, err)
 	}
 	observationToUpdate.Value = observation.Value
 	if observation.TargetID != uuid.Nil {
@@ -97,10 +97,10 @@ func (o ObservationResource) Update(c buffalo.Context) error {
 	vErr, err := models.DB.ValidateAndUpdate(observationToUpdate)
 	if vErr.HasAny() {
 		log.SysLog.WithField("err", err).Error("entity not valid")
-		return response.SendError(c, http.StatusBadRequest, vErr)
+		return response.SendBadRequestError(c, vErr)
 	} else if err != nil {
 		log.SysLog.WithField("vErr", vErr).Error("entity not valid")
-		return response.SendError(c, http.StatusBadRequest, err)
+		return response.SendBadRequestError(c, err)
 	}
 	return response.SendOKResponse(c, observationToUpdate)
 }

@@ -24,11 +24,11 @@ func UsersCreate(c buffalo.Context) error {
 	vErr, err := models.DB.ValidateAndCreate(user)
 	if err != nil {
 		log.SysLog.Error("entity not valid")
-		response.SendGeneralError(c, err)
+		response.SendBadRequestError(c, err)
 	}
 	if vErr.HasAny() {
 		log.SysLog.WithField("err", err).Error("entity not valid")
-		return response.SendGeneralError(c, vErr)
+		return response.SendBadRequestError(c, vErr)
 	}
 
 	user.Password = ""
@@ -51,7 +51,7 @@ func UsersReadByID(c buffalo.Context) error {
 	err := models.DB.Select("id, username, created_at, updated_at").Find(&user, id)
 	if err != nil {
 		log.SysLog.WithField("err", err).Error("cannot find entity")
-		response.SendGeneralError(c, err)
+		response.SendNotFoundError(c, err)
 	}
 	return response.SendOKResponse(c, &user)
 }

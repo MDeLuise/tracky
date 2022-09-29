@@ -31,6 +31,18 @@ func SendGeneralError(c buffalo.Context, err error) error {
 	return SendError(c, http.StatusInternalServerError, err)
 }
 
+func SendNotFoundError(c buffalo.Context, err error) error {
+	return SendError(c, http.StatusNotFound, err)
+}
+
+func SendBadRequestError(c buffalo.Context, err error) error {
+	return SendError(c, http.StatusBadRequest, err)
+}
+
+func SendUnauthorizedError(c buffalo.Context, err error) error {
+	return SendError(c, http.StatusUnauthorized, err)
+}
+
 func SendError(c buffalo.Context, statusCode int, err error) error {
 	return send(c, statusCode, err.Error())
 }
