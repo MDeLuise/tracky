@@ -72,13 +72,14 @@ func App() *buffalo.App {
 		app.Use(AuthMiddleware)
 
 		// Disable Auth Middleware in these fuctions
-		app.Middleware.Skip(AuthMiddleware, AuthLogin, UsersCreate)
+		app.Middleware.Skip(AuthMiddleware, AuthLogin, AuthRefresh, UsersCreate)
 
 		app.Resource("/target", TargetResource{})
 		app.Resource("/value", ObservationResource{})
 
 		a := app.Group("/auth")
 		a.POST("/login", AuthLogin)
+		a.POST("/refresh", AuthRefresh)
 	}
 
 	return app

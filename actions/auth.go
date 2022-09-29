@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"strconv"
 	"time"
 	"tracky_go/log"
 	"tracky_go/models"
@@ -16,15 +17,13 @@ import (
 
 func AuthLogin(c buffalo.Context) error {
 	user := &models.User{}
-	secret := os.Getenv("JWT_SECRET")
-
 	if err := c.Bind(user); err != nil {
-		return err
+		log.SysLog.WithField("err", err).Error("error processing request")
+		return response.SendGeneralError(c, err)
 	}
 
 	username := user.Username
 	password := user.Password
-
 	if username == "" || password == "" {
 		log.SysLog.Error("username or password empty")
 		return response.SendError(
@@ -51,16 +50,99 @@ func AuthLogin(c buffalo.Context) error {
 		)
 	}
 
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"id":  user.ID,
-		"exp": time.Now().Add(time.Hour * 1).Unix(),
-	})
-
-	tokenString, err := token.SignedString([]byte(secret))
+	token, err := createAccessToken(user.ID.String())
 	if err != nil {
-		log.SysLog.Error("error creating the jwt token")
+		log.SysLog.WithField("err", err).Error("error creating the jwt token")
 		return response.SendGeneralError(c, err)
 	}
 
-	return response.SendOKResponse(c, map[string]string{"token": tokenString})
+	refreshToken, err := createRefreshToken(user.ID.String())
+	if err != nil {
+		log.SysLog.WithField("err", err).Error("error creating the refresh jwt token")
+		return response.SendGeneralError(c, err)
+	}
+
+	return response.SendOKResponse(c, map[string]string{
+		"token": token, "refreshToken": refreshToken})
+}
+
+func AuthRefresh(c buffalo.Context) error {
+	usedRefreshToken := &struct{ RefreshToken string }{}
+	refreshSecret := os.Getenv("JWT_REFRESH_SECRET")
+	if err := c.Bind(usedRefreshToken); err != nil {
+		log.SysLog.WithField("err", err).Error("error processing request")
+		return response.SendGeneralError(c, err)
+	}
+
+	token, err := jwt.Parse(usedRefreshToken.RefreshToken,
+		func(token *jwt.Token) (interface{}, error) {
+			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+				log.SysLog.WithField("signingMethod", token.Header["alg"]).
+					Error("unexpected signing method")
+				return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+			}
+			return []byte(refreshSecret), nil
+		})
+	if err != nil {
+		log.SysLog.WithField("err", err).Error("error parsing token")
+		return response.SendGeneralError(c, err)
+	} else if !token.Valid {
+		log.SysLog.Error("token not valid")
+		return response.SendGeneralError(c, fmt.Errorf("token not valid"))
+	}
+
+	claims, ok := token.Claims.(jwt.MapClaims)
+	if !ok {
+		log.SysLog.Error("error parsing token claims")
+		return response.SendGeneralError(c, fmt.Errorf("error parsing token claims"))
+	} else if !claims["refresh"].(bool) {
+		log.SysLog.Error("token is not a refresh token")
+		return response.SendGeneralError(c, fmt.Errorf("token is not a refresh token"))
+	}
+	userID := claims["id"].(string)
+	newToken, err := createAccessToken(userID)
+	if err != nil {
+		log.SysLog.WithField("err", err).Error("error creating the jwt token")
+		return response.SendGeneralError(c, err)
+	}
+	newRefreshToken, err := createRefreshToken(userID)
+	if err != nil {
+		log.SysLog.WithField("err", err).Error("error creating the refresh token")
+		return response.SendGeneralError(c, err)
+	}
+	return response.SendOKResponse(c, map[string]string{
+		"token": newToken, "refreshToken": newRefreshToken})
+}
+
+func createAccessToken(userID string) (string, error) {
+	secret := os.Getenv("JWT_SECRET")
+	expirationHour, err := strconv.Atoi(os.Getenv("ACCESS_TOKEN_EXPIRATION_HOUR"))
+	if err != nil {
+		return "", err 
+	}
+	expiration := time.Now().Add(time.Hour * time.Duration(expirationHour)).Unix()
+	return createToken(userID, secret, false, expiration)
+}
+
+func createRefreshToken(userID string) (string, error) {
+	secret := os.Getenv("JWT_REFRESH_SECRET")
+	expirationHour, err := strconv.Atoi(os.Getenv("REFRESH_TOKEN_EXPIRATION_HOUR"))
+	if err != nil {
+		return "", err 
+	}
+	expiration := time.Now().Add(time.Hour * time.Duration(expirationHour)).Unix()
+	return createToken(userID, secret, true, expiration)
+}
+
+func createToken(userID, secret string, refresh bool, expiration int64) (string, error) {
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+		"id":      userID,
+		"refresh": refresh,
+		"exp":     expiration,
+	})
+	tokenString, err := token.SignedString([]byte(secret))
+	if err != nil {
+		return "", err
+	}
+	return tokenString, nil
 }
