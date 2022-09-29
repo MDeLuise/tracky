@@ -5,7 +5,7 @@ name = "load test data"
     name = "targets"
 
     [[scenario.table.row]]
-      id = "<%= uuid() %>"
+      id = "b6e6ee74-1fb8-433e-a677-9befe3f2856b"
       name = "target 0"
       description = "description of target 0"
       created_at = "<%= now() %>"
@@ -32,9 +32,17 @@ name = "load test data"
     name = "observations"
 
     [[scenario.table.row]]
-      id = "<%= uuid() %>"
+      id = "67434615-815d-428f-8bd7-fdbd445341b5"
       value = 42.42
       time = "<%= now() %>"
       target_id = "c6e6ee74-1fb8-433e-a677-9befe3f2856a"
+      created_at = "<%= now() %>"
+      updated_at = "<%= now() %>"
+
+    [[scenario.table.row]]
+      id = "42434615-815d-428f-8bd7-fdbd445341d5"
+      value = 24.24
+      time = "<%= now() %>"
+      target_id = "b6e6ee74-1fb8-433e-a677-9befe3f2856b"
       created_at = "<%= now() %>"
       updated_at = "<%= now() %>"

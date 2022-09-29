@@ -1,7 +1,6 @@
 package actions
 
 import (
-	"fmt"
 	"net/http"
 	"time"
 
@@ -48,10 +47,6 @@ func (as *ActionSuite) Test_ObservationPostLegal() {
 	}
 	req := as.JSON(observationBaseURL)
 	req.Headers = headers
-	targetID, err := getTargetID(as, token)
-	if err != nil {
-		as.Fail(err.Error())
-	}
 	res := req.Post(&struct {
 		Value     float64
 		Time      string
@@ -59,7 +54,7 @@ func (as *ActionSuite) Test_ObservationPostLegal() {
 	}{
 		42.42,
 		time.Now().Format(time.RFC3339),
-		targetID,
+		fixtureTargetID1,
 	})
 	as.Equal(http.StatusOK, res.Code)
 }
@@ -98,29 +93,7 @@ func (as *ActionSuite) Test_ObservationDestroyLegal() {
 	headers := map[string]string{
 		"Authorization": "Bearer " + token,
 	}
-	req := as.JSON(observationBaseURL)
-	req.Headers = headers
-	targetID, err := getTargetID(as, token)
-	if err != nil {
-		as.Fail(err.Error())
-	}
-	res := req.Post(&struct {
-		Value     float64
-		Time      string
-		Target_id string
-	}{
-		42.42,
-		time.Now().Format(time.RFC3339),
-		targetID,
-	})
-	as.Equal(http.StatusOK, res.Code)
-
-	data, err := getResponseData(res)
-	if err != nil {
-		as.Fail(err.Error())
-	}
-	observationID := data["id"].(string)
-	req = as.JSON(appendAtBaseURL(observationBaseURL, observationID))
+	req := as.JSON(appendAtBaseURL(observationBaseURL, fixtureObservationID1))
 	req.Headers = headers
 	as.Equal(http.StatusOK, req.Delete().Code)
 }
@@ -176,35 +149,14 @@ func (as *ActionSuite) Test_ObservationUpdateLegal() {
 	headers := map[string]string{
 		"Authorization": "Bearer " + token,
 	}
-	targetID, err := getTargetID(as, token)
-	if err != nil {
-		as.Fail(err.Error())
-	}
-	req := as.JSON(observationBaseURL)
+	req := as.JSON(appendAtBaseURL(observationBaseURL, fixtureObservationID1))
 	req.Headers = headers
-	res := req.Post(&struct {
-		Value     float64
-		Time      string
-		Target_id string
-	}{
-		42.42,
-		time.Now().Format(time.RFC3339),
-		targetID,
-	})
-	as.Equal(http.StatusOK, res.Code)
-	data, err := getResponseData(res)
-	if err != nil {
-		as.Fail(err.Error())
-	}
-	observationID := data["id"].(string)
-	req = as.JSON(appendAtBaseURL(observationBaseURL, observationID))
-	req.Headers = headers
-	res = req.Put(&struct {
+	res := req.Put(&struct {
 		Value     float64
 		Target_id string
 	}{
 		24.24,
-		targetID,
+		fixtureTargetID1,
 	})
 	as.Equal(http.StatusOK, res.Code)
 }
@@ -217,34 +169,13 @@ func (as *ActionSuite) Test_ObservationUpdateNotExistingTarget() {
 	headers := map[string]string{
 		"Authorization": "Bearer " + token,
 	}
-	targetID, err := getTargetID(as, token)
-	if err != nil {
-		as.Fail(err.Error())
-	}
-	req := as.JSON(observationBaseURL)
-	req.Headers = headers
-	res := req.Post(&struct {
-		Value     float64
-		Time      string
-		Target_id string
-	}{
-		42.42,
-		time.Now().Format(time.RFC3339),
-		targetID,
-	})
-	as.Equal(http.StatusOK, res.Code)
-	data, err := getResponseData(res)
-	if err != nil {
-		as.Fail(err.Error())
-	}
-	observationID := data["id"].(string)
 	fakeID, err := uuid.NewV4()
 	if err != nil {
 		as.Fail(err.Error())
 	}
-	req = as.JSON(appendAtBaseURL(observationBaseURL, observationID))
+	req := as.JSON(appendAtBaseURL(observationBaseURL, fixtureObservationID1))
 	req.Headers = headers
-	res = req.Put(&struct {
+	res := req.Put(&struct {
 		Value     float64
 		Time      string
 		Target_id string
@@ -254,21 +185,4 @@ func (as *ActionSuite) Test_ObservationUpdateNotExistingTarget() {
 		fakeID.String(),
 	})
 	as.Equal(http.StatusInternalServerError, res.Code)
-}
-
-func getTargetID(as *ActionSuite, token string) (string, error) {
-	headers := map[string]string{
-		"Authorization": "Bearer " + token,
-	}
-	req := as.JSON(targetBaseURL)
-	req.Headers = headers
-	res := req.Get()
-	if res.Code != http.StatusOK {
-		return "", fmt.Errorf("cannot get targets, status code %v", res.Code)
-	}
-	data, err := getResponseDataArray(res)
-	if err != nil {
-		return "", fmt.Errorf("cannot get response data: %s", err)
-	}
-	return data[0]["id"].(string), nil
 }

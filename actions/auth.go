@@ -58,26 +58,26 @@ func AuthLogin(c buffalo.Context) error {
 	}
 
 	return response.SendOKResponse(c, map[string]string{
-		"token": token, "refreshToken": refreshToken})
+		"token": token, "refresh_token": refreshToken})
 }
 
 func AuthRefresh(c buffalo.Context) error {
-	usedRefreshToken := &struct{ RefreshToken string }{}
+	usedRefreshToken := &struct{ Refresh_token string }{}
 	if err := c.Bind(usedRefreshToken); err != nil {
 		log.SysLog.WithField("err", err).Error("error processing request")
 		return response.SendBadRequestError(c, err)
 	}
 
-	if !services.IsTokenValid(usedRefreshToken.RefreshToken) {
+	if !services.IsTokenValid(usedRefreshToken.Refresh_token) {
 		log.SysLog.Error("token not valid")
 		return response.SendBadRequestError(c, fmt.Errorf("token not valid"))
 	}
 
-	if isRefresh, _ := services.GetTokenClaim(usedRefreshToken.RefreshToken, "refresh"); !isRefresh.(bool) {
+	if isRefresh, _ := services.GetTokenClaim(usedRefreshToken.Refresh_token, "refresh"); !isRefresh.(bool) {
 		log.SysLog.Error("token is not a refresh token")
 		return response.SendBadRequestError(c, fmt.Errorf("token is not a refresh token"))
 	}
-	userID, _ := services.GetTokenClaim(usedRefreshToken.RefreshToken, "id")
+	userID, _ := services.GetTokenClaim(usedRefreshToken.Refresh_token, "id")
 	newToken, err := services.CreateAccessToken(userID.(string))
 	if err != nil {
 		log.SysLog.WithField("err", err).Error("error creating the jwt token")
@@ -89,5 +89,5 @@ func AuthRefresh(c buffalo.Context) error {
 		return response.SendGeneralError(c, err)
 	}
 	return response.SendOKResponse(c, map[string]string{
-		"token": newToken, "refreshToken": newRefreshToken})
+		"token": newToken, "refresh_token": newRefreshToken})
 }

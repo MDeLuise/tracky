@@ -12,6 +12,13 @@ import (
 	"github.com/gobuffalo/suite/v4"
 )
 
+const (
+	fixtureTargetID1      = "c6e6ee74-1fb8-433e-a677-9befe3f2856a"
+	fixtureTargetID2      = "b6e6ee74-1fb8-433e-a677-9befe3f2856b"
+	fixtureObservationID1 = "67434615-815d-428f-8bd7-fdbd445341b5"
+	fixtureObservationID2 = "42434615-815d-428f-8bd7-fdbd445341d5"
+)
+
 type ActionSuite struct {
 	*suite.Action
 }
@@ -40,6 +47,20 @@ func getLoginToken(as *ActionSuite) (string, error) {
 	}
 	data, err := getResponseData(res)
 	return data["token"].(string), err
+}
+
+func getRefreshToken(as *ActionSuite) (string, error) {
+	as.LoadFixture("load test data")
+	res := as.JSON(authBaseURL).Post(&loginRequest{
+		Username: "admin",
+		Password: "admin",
+	})
+	if res.Code != 200 {
+		return "", errors.New(
+			"response code not 200: " + strconv.FormatInt(int64(res.Code), 10))
+	}
+	data, err := getResponseData(res)
+	return data["refresh_token"].(string), err
 }
 
 func getResponseData(res *httptest.JSONResponse) (map[string]interface{}, error) {

@@ -12,23 +12,23 @@ import (
 
 func CreateAccessToken(userID string) (string, error) {
 	secret := os.Getenv("JWT_SECRET")
-	expirationHour, err := strconv.Atoi(os.Getenv("ACCESS_TOKEN_EXPIRATION_HOUR"))
+	expirationSeconds, err := strconv.Atoi(os.Getenv("ACCESS_TOKEN_EXPIRATION_SECONDS"))
 	if err != nil {
 		log.SysLog.WithField("err", err).Error("error getting the expiration date")
 		return "", err
 	}
-	expiration := time.Now().Add(time.Hour * time.Duration(expirationHour)).Unix()
+	expiration := time.Now().Add(time.Second * time.Duration(expirationSeconds)).Unix()
 	return createToken(userID, secret, false, expiration)
 }
 
 func CreateRefreshToken(userID string) (string, error) {
 	secret := os.Getenv("JWT_REFRESH_SECRET")
-	expirationHour, err := strconv.Atoi(os.Getenv("REFRESH_TOKEN_EXPIRATION_HOUR"))
+	expirationSeconds, err := strconv.Atoi(os.Getenv("REFRESH_TOKEN_EXPIRATION_SECONDS"))
 	if err != nil {
 		log.SysLog.WithField("err", err).Error("error getting the expiration date")
 		return "", err
 	}
-	expiration := time.Now().Add(time.Hour * time.Duration(expirationHour)).Unix()
+	expiration := time.Now().Add(time.Second * time.Duration(expirationSeconds)).Unix()
 	return createToken(userID, secret, true, expiration)
 }
 

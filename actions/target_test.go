@@ -2,7 +2,6 @@ package actions
 
 import (
 	"net/http"
-	"time"
 
 	"github.com/gobuffalo/httptest"
 	"github.com/gofrs/uuid"
@@ -94,23 +93,7 @@ func (as *ActionSuite) Test_TargetDestroyLegal() {
 	headers := map[string]string{
 		"Authorization": "Bearer " + token,
 	}
-	req := as.JSON(targetBaseURL)
-	req.Headers = headers
-	res := req.Post(&struct {
-		Name        string
-		Description string
-	}{
-		"foo",
-		"foo...bar...",
-	})
-	as.Equal(http.StatusOK, res.Code)
-
-	resData, err := getResponseData(res)
-	if err != nil {
-		as.Fail(err.Error())
-	}
-
-	req = as.JSON(appendAtBaseURL(targetBaseURL, resData["id"].(string)))
+	req := as.JSON(appendAtBaseURL(targetBaseURL, fixtureTargetID1))
 	req.Headers = headers
 	as.Equal(http.StatusOK, req.Delete().Code)
 }
@@ -140,46 +123,35 @@ func (as *ActionSuite) Test_TargetDestroyAlsoDeleteLinkedObservations() {
 	headers := map[string]string{
 		"Authorization": "Bearer " + token,
 	}
-	req := as.JSON(targetBaseURL)
+	req := as.JSON(appendAtBaseURL(observationBaseURL, fixtureObservationID1))
 	req.Headers = headers
-	res := req.Post(&struct {
-		Name string
-	}{
-		"foo",
-	})
-	as.Equal(http.StatusOK, res.Code)
+	as.Equal(http.StatusOK, req.Get().Code)
 
-	resData, err := getResponseData(res)
-	if err != nil {
-		as.Fail(err.Error())
-	}
-
-	targetID := resData["id"].(string)
-	req = as.JSON(observationBaseURL)
-	req.Headers = headers
-	res = req.Post(&struct {
-		Value     float64
-		Time      string
-		Target_id string
-	}{
-		42.42,
-		time.Now().Format(time.RFC3339),
-		targetID,
-	})
-	as.Equal(http.StatusOK, res.Code)
-	resData, err = getResponseData(res)
-	if err != nil {
-		as.Fail(err.Error())
-	}
-	observationID := resData["id"].(string)
-	req = as.JSON(appendAtBaseURL(targetBaseURL, targetID))
+	req = as.JSON(appendAtBaseURL(targetBaseURL, fixtureTargetID1))
 	req.Headers = headers
 	as.Equal(http.StatusOK, req.Delete().Code)
 
-	req = as.JSON(appendAtBaseURL(observationBaseURL, observationID))
+	req = as.JSON(appendAtBaseURL(observationBaseURL, fixtureObservationID1))
 	req.Headers = headers
-
 	as.Equal(http.StatusNotFound, req.Get().Code)
+}
+
+func (as *ActionSuite) Test_TargetDestroyDeleteOnlyLinkedObservations() {
+	token, err := getLoginToken(as)
+	if err != nil {
+		as.Fail(err.Error())
+	}
+	headers := map[string]string{
+		"Authorization": "Bearer " + token,
+	}
+
+	req := as.JSON(appendAtBaseURL(targetBaseURL, fixtureTargetID1))
+	req.Headers = headers
+	as.Equal(http.StatusOK, req.Delete().Code)
+
+	req = as.JSON(appendAtBaseURL(observationBaseURL, fixtureObservationID2))
+	req.Headers = headers
+	as.Equal(http.StatusOK, req.Get().Code)
 }
 
 func (as *ActionSuite) Test_TargetUpdateLegal() {
@@ -190,25 +162,9 @@ func (as *ActionSuite) Test_TargetUpdateLegal() {
 	headers := map[string]string{
 		"Authorization": "Bearer " + token,
 	}
-	req := as.JSON(targetBaseURL)
+	req := as.JSON(appendAtBaseURL(targetBaseURL, fixtureTargetID1))
 	req.Headers = headers
-	res := req.Post(&struct {
-		Name        string
-		Description string
-	}{
-		"foo",
-		"foo...bar...",
-	})
-	as.Equal(http.StatusOK, res.Code)
-
-	resData, err := getResponseData(res)
-	if err != nil {
-		as.Fail(err.Error())
-	}
-
-	req = as.JSON(appendAtBaseURL(targetBaseURL, resData["id"].(string)))
-	req.Headers = headers
-	res = req.Put(&struct {
+	res := req.Put(&struct {
 		Name        string
 		Description string
 	}{
@@ -226,25 +182,9 @@ func (as *ActionSuite) Test_TargetUpdateWithEmptyName() {
 	headers := map[string]string{
 		"Authorization": "Bearer " + token,
 	}
-	req := as.JSON(targetBaseURL)
+	req := as.JSON(appendAtBaseURL(targetBaseURL, fixtureTargetID1))
 	req.Headers = headers
-	res := req.Post(&struct {
-		Name        string
-		Description string
-	}{
-		"foo",
-		"foo...bar...",
-	})
-	as.Equal(http.StatusOK, res.Code)
-
-	resData, err := getResponseData(res)
-	if err != nil {
-		as.Fail(err.Error())
-	}
-
-	req = as.JSON(appendAtBaseURL(targetBaseURL, resData["id"].(string)))
-	req.Headers = headers
-	res = req.Put(&struct {
+	res := req.Put(&struct {
 		Name        string
 		Description string
 	}{
