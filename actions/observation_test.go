@@ -20,7 +20,7 @@ func (as *ActionSuite) Test_ObservationEndpointShouldBeAuthenticated() {
 	responses = append(responses, as.JSON(observationBaseURL+"/42").Put(nil))
 
 	for _, res := range responses {
-		as.Equal(401, res.Code)
+		as.Equal(http.StatusUnauthorized, res.Code)
 	}
 }
 
@@ -35,7 +35,7 @@ func (as *ActionSuite) Test_ObservationGet() {
 	req := as.JSON(observationBaseURL)
 	req.Headers = headers
 	res := req.Get()
-	as.Equal(200, res.Code)
+	as.Equal(http.StatusOK, res.Code)
 }
 
 func (as *ActionSuite) Test_ObservationPostLegal() {
@@ -61,7 +61,7 @@ func (as *ActionSuite) Test_ObservationPostLegal() {
 		time.Now().Format(time.RFC3339),
 		targetID,
 	})
-	as.Equal(200, res.Code)
+	as.Equal(http.StatusOK, res.Code)
 }
 
 func (as *ActionSuite) Test_ObservationPostNotExistingTarget() {
@@ -87,7 +87,7 @@ func (as *ActionSuite) Test_ObservationPostNotExistingTarget() {
 		time.Now().Format(time.RFC3339),
 		fakeID,
 	})
-	as.Equal(400, res.Code)
+	as.Equal(http.StatusInternalServerError, res.Code)
 }
 
 func (as *ActionSuite) Test_ObservationDestroyLegal() {
@@ -113,7 +113,7 @@ func (as *ActionSuite) Test_ObservationDestroyLegal() {
 		time.Now().Format(time.RFC3339),
 		targetID,
 	})
-	as.Equal(200, res.Code)
+	as.Equal(http.StatusOK, res.Code)
 
 	data, err := getResponseData(res)
 	if err != nil {
@@ -137,9 +137,9 @@ func (as *ActionSuite) Test_ObservationDestroyNotExisting() {
 	if err != nil {
 		as.Fail(err.Error())
 	}
-	req := as.JSON(observationBaseURL + fakeID.String())
+	req := as.JSON(appendAtBaseURL(observationBaseURL, fakeID.String()))
 	req.Headers = headers
-	as.Equal(404, req.Delete().Code)
+	as.Equal(http.StatusInternalServerError, req.Delete().Code)
 }
 
 func (as *ActionSuite) Test_ObservationUpdateNonExisting() {
@@ -165,7 +165,7 @@ func (as *ActionSuite) Test_ObservationUpdateNonExisting() {
 		time.Now().Format(time.RFC3339),
 		fakeID,
 	})
-	as.Equal(404, res.Code)
+	as.Equal(http.StatusInternalServerError, res.Code)
 }
 
 func (as *ActionSuite) Test_ObservationUpdateLegal() {
@@ -253,7 +253,7 @@ func (as *ActionSuite) Test_ObservationUpdateNotExistingTarget() {
 		time.Now().Format(time.RFC3339),
 		fakeID.String(),
 	})
-	as.Equal(http.StatusBadRequest, res.Code)
+	as.Equal(http.StatusInternalServerError, res.Code)
 }
 
 func getTargetID(as *ActionSuite, token string) (string, error) {

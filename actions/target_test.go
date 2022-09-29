@@ -19,7 +19,7 @@ func (as *ActionSuite) Test_TargetEndpointShouldBeAuthenticated() {
 	responses = append(responses, as.JSON(targetBaseURL+"/42").Put(nil))
 
 	for _, res := range responses {
-		as.Equal(401, res.Code)
+		as.Equal(http.StatusUnauthorized, res.Code)
 	}
 }
 
@@ -34,7 +34,7 @@ func (as *ActionSuite) Test_TargetGet() {
 	req := as.JSON(targetBaseURL)
 	req.Headers = headers
 	res := req.Get()
-	as.Equal(200, res.Code)
+	as.Equal(http.StatusOK, res.Code)
 }
 
 func (as *ActionSuite) Test_TargetPostLegal() {
@@ -54,7 +54,7 @@ func (as *ActionSuite) Test_TargetPostLegal() {
 		"foo",
 		"",
 	})
-	as.Equal(200, res.Code)
+	as.Equal(http.StatusOK, res.Code)
 
 	resData, err := getResponseData(res)
 	if err != nil {
@@ -63,7 +63,7 @@ func (as *ActionSuite) Test_TargetPostLegal() {
 
 	req = as.JSON(appendAtBaseURL(targetBaseURL, resData["id"].(string)))
 	req.Headers = headers
-	as.Equal(200, req.Get().Code)
+	as.Equal(http.StatusOK, req.Get().Code)
 }
 
 func (as *ActionSuite) Test_TargetPostWithEmptyName() {
@@ -83,7 +83,7 @@ func (as *ActionSuite) Test_TargetPostWithEmptyName() {
 		"",
 		"foo...bar...",
 	})
-	as.Equal(400, res.Code)
+	as.Equal(http.StatusBadRequest, res.Code)
 }
 
 func (as *ActionSuite) Test_TargetDestroyLegal() {
@@ -103,7 +103,7 @@ func (as *ActionSuite) Test_TargetDestroyLegal() {
 		"foo",
 		"foo...bar...",
 	})
-	as.Equal(200, res.Code)
+	as.Equal(http.StatusOK, res.Code)
 
 	resData, err := getResponseData(res)
 	if err != nil {
@@ -112,7 +112,7 @@ func (as *ActionSuite) Test_TargetDestroyLegal() {
 
 	req = as.JSON(appendAtBaseURL(targetBaseURL, resData["id"].(string)))
 	req.Headers = headers
-	as.Equal(200, req.Delete().Code)
+	as.Equal(http.StatusOK, req.Delete().Code)
 }
 
 func (as *ActionSuite) Test_TargetDestroyNotExisting() {
@@ -129,7 +129,7 @@ func (as *ActionSuite) Test_TargetDestroyNotExisting() {
 	}
 	req := as.JSON(appendAtBaseURL(targetBaseURL, fakeID.String()))
 	req.Headers = headers
-	as.Equal(404, req.Delete().Code)
+	as.Equal(http.StatusInternalServerError, req.Delete().Code)
 }
 
 func (as *ActionSuite) Test_TargetDestroyAlsoDeleteLinkedObservations() {
@@ -147,7 +147,7 @@ func (as *ActionSuite) Test_TargetDestroyAlsoDeleteLinkedObservations() {
 	}{
 		"foo",
 	})
-	as.Equal(200, res.Code)
+	as.Equal(http.StatusOK, res.Code)
 
 	resData, err := getResponseData(res)
 	if err != nil {
@@ -166,7 +166,7 @@ func (as *ActionSuite) Test_TargetDestroyAlsoDeleteLinkedObservations() {
 		time.Now().Format(time.RFC3339),
 		targetID,
 	})
-	as.Equal(200, res.Code)
+	as.Equal(http.StatusOK, res.Code)
 	resData, err = getResponseData(res)
 	if err != nil {
 		as.Fail(err.Error())
@@ -174,7 +174,7 @@ func (as *ActionSuite) Test_TargetDestroyAlsoDeleteLinkedObservations() {
 	observationID := resData["id"].(string)
 	req = as.JSON(appendAtBaseURL(targetBaseURL, targetID))
 	req.Headers = headers
-	as.Equal(200, req.Delete().Code)
+	as.Equal(http.StatusOK, req.Delete().Code)
 
 	req = as.JSON(appendAtBaseURL(observationBaseURL, observationID))
 	req.Headers = headers
@@ -199,7 +199,7 @@ func (as *ActionSuite) Test_TargetUpdateLegal() {
 		"foo",
 		"foo...bar...",
 	})
-	as.Equal(200, res.Code)
+	as.Equal(http.StatusOK, res.Code)
 
 	resData, err := getResponseData(res)
 	if err != nil {
@@ -215,7 +215,7 @@ func (as *ActionSuite) Test_TargetUpdateLegal() {
 		"BAR",
 		"",
 	})
-	as.Equal(200, res.Code)
+	as.Equal(http.StatusOK, res.Code)
 }
 
 func (as *ActionSuite) Test_TargetUpdateWithEmptyName() {
@@ -235,7 +235,7 @@ func (as *ActionSuite) Test_TargetUpdateWithEmptyName() {
 		"foo",
 		"foo...bar...",
 	})
-	as.Equal(200, res.Code)
+	as.Equal(http.StatusOK, res.Code)
 
 	resData, err := getResponseData(res)
 	if err != nil {
@@ -251,7 +251,7 @@ func (as *ActionSuite) Test_TargetUpdateWithEmptyName() {
 		"",
 		"",
 	})
-	as.Equal(400, res.Code)
+	as.Equal(http.StatusInternalServerError, res.Code)
 }
 
 func (as *ActionSuite) Test_TargetUpdateNonExisting() {
@@ -275,5 +275,5 @@ func (as *ActionSuite) Test_TargetUpdateNonExisting() {
 		"",
 		"",
 	})
-	as.Equal(404, res.Code)
+	as.Equal(http.StatusInternalServerError, res.Code)
 }

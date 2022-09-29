@@ -7,6 +7,7 @@ import (
 	"tracky_go/log"
 	"tracky_go/models"
 	"tracky_go/response"
+	"tracky_go/services"
 
 	"github.com/gobuffalo/buffalo"
 )
@@ -14,10 +15,8 @@ import (
 type TargetResource struct{}
 
 func (t TargetResource) List(c buffalo.Context) error {
-	target := []models.Target{}
-	err := models.DB.All(&target)
-	if err != nil {
-		log.SysLog.WithField("err", err).Error("error while connecting to DB")
+	target := &models.Targets{}
+	if err := services.GetAllTargets(target); err != nil {
 		return response.SendGeneralError(c, err)
 	}
 	return response.SendOKResponse(c, target)
@@ -25,13 +24,12 @@ func (t TargetResource) List(c buffalo.Context) error {
 
 func (t TargetResource) Show(c buffalo.Context) error {
 	id := c.Param("target_id")
-	target := models.Target{}
-	err := models.DB.Find(&target, id)
-	if err != nil {
-		log.SysLog.WithField("err", err).Error("cannot find entity with id")
+	target := &models.Target{}
+	if err := services.GetTargetByID(target, id); err != nil {
+		log.SysLog.WithField("err", err).Error("cannot find entity")
 		return response.SendNotFoundError(c, err)
 	}
-	return response.SendOKResponse(c, &target)
+	return response.SendOKResponse(c, target)
 }
 
 func (t TargetResource) Create(c buffalo.Context) error {
@@ -42,25 +40,15 @@ func (t TargetResource) Create(c buffalo.Context) error {
 	}
 	target := &models.Target{}
 	json.Unmarshal([]byte(body), target)
-	vErr, err := models.DB.ValidateAndCreate(target)
-	if err != nil {
-		log.SysLog.WithField("err", err).Error("entity not valid")
-		return response.SendBadRequestError(c, err)
-	}
-	if vErr.HasAny() {
-		log.SysLog.WithField("vErr", vErr.Errors).Error("entity not valid")
-		return response.SendBadRequestError(c, vErr)
+	if err = services.CreateTarget(target); err != nil {
+		response.SendBadRequestError(c, err)
 	}
 	return response.SendOKResponse(c, target)
 }
 
 func (t TargetResource) Destroy(c buffalo.Context) error {
 	id := c.Param("target_id")
-	target := &models.Target{}
-	if err := models.DB.Find(target, id); err != nil {
-		return response.SendNotFoundError(c, err)
-	}
-	if err := models.DB.Destroy(target); err != nil {
+	if err := services.DestroyTarget(id); err != nil {
 		response.SendGeneralError(c, err)
 	}
 	return response.SendOKResponse(c, nil)
@@ -74,22 +62,12 @@ func (t TargetResource) Update(c buffalo.Context) error {
 		return response.SendBadRequestError(c, err)
 	}
 	targetToUpdate := &models.Target{}
-	err = models.DB.Find(targetToUpdate, id)
-	if err != nil {
-		log.SysLog.WithField("err", err).Error("cannot find entity with id")
-		return response.SendNotFoundError(c, err)
-	}
 	target := &models.Target{}
 	json.Unmarshal([]byte(body), target)
 	targetToUpdate.Description = target.Description
 	targetToUpdate.Name = target.Name
-	vErr, err := models.DB.ValidateAndUpdate(targetToUpdate)
-	if vErr.HasAny() {
-		log.SysLog.WithField("err", err).Error("entity not valid")
-		return response.SendBadRequestError(c, vErr)
-	} else if err != nil {
-		log.SysLog.WithField("err", err).Error("entity not valid")
-		return response.SendBadRequestError(c, err)
+	if err = services.UpdateTarget(id, targetToUpdate); err != nil {
+		return response.SendGeneralError(c, err)
 	}
 	return response.SendOKResponse(c, targetToUpdate)
 }
