@@ -41,7 +41,7 @@ func (t TargetResource) Create(c buffalo.Context) error {
 	target := &models.Target{}
 	json.Unmarshal([]byte(body), target)
 	if err = services.CreateTarget(target); err != nil {
-		response.SendBadRequestError(c, err)
+		return response.SendBadRequestError(c, err)
 	}
 	return response.SendOKResponse(c, target)
 }
@@ -49,7 +49,7 @@ func (t TargetResource) Create(c buffalo.Context) error {
 func (t TargetResource) Destroy(c buffalo.Context) error {
 	id := c.Param("target_id")
 	if err := services.DestroyTarget(id); err != nil {
-		response.SendGeneralError(c, err)
+		return response.SendGeneralError(c, err)
 	}
 	return response.SendOKResponse(c, nil)
 }

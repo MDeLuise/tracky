@@ -80,6 +80,16 @@ func App() *buffalo.App {
 		a := app.Group("/auth")
 		a.POST("/login", AuthLogin)
 		a.POST("/refresh", AuthRefresh)
+
+		s := app.Group("/stats")
+		s.GET("/mean/{target_id}", TargetMean)
+		s.GET("/mean/{target_id}/{at}", TargetMeanAt)
+		s.GET("/increment/{target_id}", TargetLastIncrement)
+
+		// just for develop purpose, to delete in production
+		u := app.Group("/user")
+		u.POST("/", UsersCreate)
+		u.GET("/", UsersRead)
 	}
 
 	return app

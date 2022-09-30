@@ -14,7 +14,7 @@ func GetAllTargets(targets *models.Targets) error {
 }
 
 func GetTargetByID(target *models.Target, id string) error {
-	err := models.DB.Find(target, id)
+	err := models.DB.Eager().Find(target, id)
 	if err != nil {
 		log.SysLog.WithField("err", err).Error("cannot find entity")
 	}
@@ -64,4 +64,12 @@ func DestroyTarget(id string) error {
 		return err
 	}
 	return nil
+}
+
+func GetLikedObservations(t *models.Target) (*models.Observations, error) {
+	linkedObservations := &models.Observations{}
+	if err := models.DB.Where("target_id = ?", t.ID).All(linkedObservations); err != nil {
+		return nil, err
+	}
+	return linkedObservations, nil
 }

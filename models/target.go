@@ -68,8 +68,7 @@ func (t *Target) ValidateUpdate(tx *pop.Connection) (*validate.Errors, error) {
 
 func (t *Target) BeforeDestroy(tx *pop.Connection) error {
 	linkedObservations := &Observations{}
-	// TODO Eager needed?
-	err := DB.Eager().Where("target_id = ?", t.ID).All(linkedObservations)
+	err := DB.Where("target_id = ?", t.ID).All(linkedObservations)
 	if err != nil {
 		return err
 	}
