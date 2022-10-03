@@ -32,7 +32,7 @@ func AuthLogin(c buffalo.Context) error {
 	err := q.First(user)
 	if err != nil {
 		log.SysLog.WithField("err", err).Error("error while searching in DB")
-		return response.SendGeneralError(c, err)
+		return response.SendUnauthorizedError(c, fmt.Errorf("invalid username or password"))
 	}
 
 	PasswordHash := user.Password
