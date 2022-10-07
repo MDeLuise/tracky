@@ -1,0 +1,28 @@
+version: '3.1'
+services:
+  db:
+    image: postgres:14
+    restart: always
+    environment:
+      POSTGRES_USERNAME: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - ../postgres:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+  rest-api:
+    build:
+      context: ../
+      dockerfile: deployment/Dockerfile
+    depends_on:
+      - db
+    restart: always
+    ports:
+        - "3000:3000"
+  db-admin:
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: root
+    ports:
+      - "5000:80"
