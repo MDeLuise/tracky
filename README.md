@@ -59,6 +59,9 @@ Visit the [provided client](https://github.com/MDeLuise/tracky-client) repositor
 ## Endpoints
 These are the provided enpoints
 
+### Login
+* `POST /login` `{username: "foo", password: "bar"}` - get access and refresh token
+* `POST /refresh` `{username: "foo", password: "bar"}` - user the refresh token to take new access and refresh tokens
 ### Target
 * `GET /target` - get all the targets
 * `GET /target/{id}` - get the target with specified id
