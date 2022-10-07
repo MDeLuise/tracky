@@ -1,39 +1,79 @@
-# Welcome to Buffalo
+# Tracky
+Tracky is a self-hosted, open source tracker service.
+It is used to monitor how a `target`'s values change over time.
 
-Thank you for choosing Buffalo for your web development needs.
+## Why Tracky?
+I'm Something of a Scientist Myself as Norman Osborn says. I enjoy keeping track of a variety of things, including gas prices, mileage, weight, etc.
+I ended up with numerous excel files that were remarkably similar to one another.
+Therefore, I made the decision to create an application that can combine all the functionality I had in the excel files with additional features.
 
-## Database Setup
+## Prerequisite
+In order to make the service works the following are needed.
 
-It looks like you chose to set up your application using a database! Fantastic!
+### Snapshot version
+If you want to use the snapshot version (i.e. simply use the servire from the _main_ branch):
+* [Go](https://go.dev/) `v1.16.0` or above
+* [Buffalo](https://gobuffalo.io/documentation/getting_started/installation/) `v0.18.8` or above
+* [Buffalo Pop](https://gobuffalo.io/pt/documentation/database/pop/)
+* [PostgreSQL](https://www.postgresql.org/)
 
-The first thing you need to do is open up the "database.yml" file and edit it to use the correct usernames, passwords, hosts, etc... that are appropriate for your environment.
+### Release version
+If you want to use the release version:
+* [Docker](https://www.docker.com/) `v17.05` or above
 
-You will also need to make sure that **you** start/install the database of your choice. Buffalo **won't** install and start it for you.
+## How to run
+In order to make the service run follow the following steps.
 
-### Create Your Databases
-
-Ok, so you've edited the "database.yml" file and started your database, now Buffalo can create the databases in that file for you:
-
-```console
-buffalo pop create -a
+### Snapshot version
+* create an `.env` file add the appropriate settings to it:
 ```
+JWT_SECRET="<secret key used to encrypt the access token>"
+ACCESS_TOKEN_EXPIRATION_SECONDS=<access token expiration expressed in seconds>
 
-## Starting the Application
+JWT_REFRESH_SECRET="<secret key used to encrypt the refresh token>"
+REFRESH_TOKEN_EXPIRATION_SECONDS=<refresh token expiration expressed in seconds>
 
-Buffalo ships with a command that will watch your application and automatically rebuild the Go binary and any assets for you. To do that run the "buffalo dev" command:
-
-```console
-buffalo dev
+LOG_LEVEL="<verbosity>" # can be trace, debug, info, warn, error
 ```
+* start a postgres server on `5432`
+* [optional] if the database is not initialized yet, run `buffalo pop create -a && buffalo pop migrate`
+* run `buffalo dev`
 
-If you point your browser to [http://127.0.0.1:3000](http://127.0.0.1:3000) you should see a "Welcome to Buffalo!" page.
+### Release version
+* create an `.env` file add the appropriate settings to it:
+```
+JWT_SECRET="<secret key used to encrypt the access token>"
+ACCESS_TOKEN_EXPIRATION_SECONDS=<access token expiration expressed in seconds>
 
-**Congratulations!** You now have your Buffalo application up and running.
+JWT_REFRESH_SECRET="<secret key used to encrypt the refresh token>"
+REFRESH_TOKEN_EXPIRATION_SECONDS=<refresh token expiration expressed in seconds>
 
-## What Next?
+LOG_LEVEL="<verbosity>" # can be trace, debug, info, warn, error
+```
+* from the `deployment` directory run `docker-compose up`
 
-We recommend you heading over to [http://gobuffalo.io](http://gobuffalo.io) and reviewing all of the great documentation there.
+## Client
+It's possible to handle the `targets` and the `values` via [rest-api](#endpoint) by using simply this repository, which hosts the server's backend.
+Visit the [provided client](https://github.com/MDeLuise/tracky-client) repository to utilize the service via mobile app and web app.
 
-Good luck!
+## Endpoints
+These are the provided enpoints
 
-[Powered by Buffalo](http://gobuffalo.io)
+### Target
+* `GET /target` - get all the targets
+* `GET /target/{id}` - get the target with specified id
+* `DELETE /target/{id}` - delete the target with specified id
+* `PUT /target/{id}` `{name: "foo", description: "bar"}` - update the target with specified id
+* `POST /target/` `{name: "foo", description: "bar"}` - create a target
+
+### Value
+* `GET /value` - get all the values
+* `GET /value/{id}` - get the value with specified id
+* `DELETE /value/{id}` - delete the value with specified id
+* `PUT /value/{id}` `{target_id: "foo", value: 42, time: "2023-09-28T14:08:59Z"}` - update the value with specified id
+* `POST /value/` `{target_id: "foo", value: 42, time: "2023-09-28T14:08:59Z"}` - create a target
+
+### Stats
+* `GET /stats/mean/{target_id}` - get the mean of the target with specified id
+* `GET /mean/{target_id}/{at}` - get the the mean of X if the target with specified id (e.g. mean of last 10 values)
+* `GET /increment/{target_id}` - get the last value increment respect the previous of the target with specified id
