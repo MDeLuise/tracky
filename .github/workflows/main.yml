@@ -1,0 +1,55 @@
+name: Automated tests
+
+on: [pull_request, push]
+
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+
+    env:
+      ADDR: 0.0.0.0
+      JWT_SECRET: "Tracky"
+      ACCESS_TOKEN_EXPIRATION_SECONDS: 3600
+      JWT_REFRESH_SECRET: "TrackyRefresh"
+      REFRESH_TOKEN_EXPIRATION_SECONDS: 604800
+      LOG_LEVEL: "debug"
+
+    services:
+      db:
+        image: postgres
+        env:
+          POSTGRES_DB: postgres
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+
+    steps:
+    - uses: actions/checkout@v2
+    
+    - name: Install Go
+      run: |
+        sudo add-apt-repository ppa:longsleep/golang-backports &&
+        sudo apt-get update &&
+        sudo apt-get install golang -y
+
+    - name: Install GoBuffalo
+      run: |
+        wget https://github.com/gobuffalo/cli/releases/download/v0.18.8/buffalo_0.18.8_Linux_x86_64.tar.gz &&
+        tar -xvzf buffalo_0.18.8_Linux_x86_64.tar.gz &&
+        mv buffalo /usr/local/bin/buffalo
+    
+    - name: Install GoBuffalo Pop
+      run: go install github.com/gobuffalo/buffalo-pop/v3@latest
+
+    - name: Run migrations
+      run: |
+       buffalo pop create - a &&
+       buffalo pop migrate
+
+    - name: Run tests
+      run: buffalo test
+        
+    - name: Run build
+      run: buffalo build
