@@ -9,6 +9,7 @@ import (
 	"tracky/response"
 
 	"github.com/gobuffalo/buffalo"
+	"github.com/gobuffalo/pop/v6"
 	"github.com/gofrs/uuid"
 )
 
@@ -21,7 +22,7 @@ func UsersCreate(c buffalo.Context) error {
 	user := &models.User{}
 	json.Unmarshal([]byte(body), user)
 	user.ID = uuid.Must(uuid.NewV4())
-	vErr, err := models.DB.ValidateAndCreate(user)
+	vErr, err := c.Value("tx").(*pop.Connection).ValidateAndCreate(user)
 	if err != nil {
 		log.SysLog.Error("entity not valid")
 		response.SendBadRequestError(c, err)
@@ -37,7 +38,7 @@ func UsersCreate(c buffalo.Context) error {
 
 func UsersRead(c buffalo.Context) error {
 	users := []models.User{}
-	err := models.DB.Select("id, username, created_at, updated_at").All(&users)
+	err := c.Value("tx").(*pop.Connection).Select("id, username, created_at, updated_at").All(&users)
 	if err != nil {
 		log.SysLog.WithField("err", err).Error("error while connecting to DB")
 		response.SendGeneralError(c, err)
@@ -48,7 +49,7 @@ func UsersRead(c buffalo.Context) error {
 func UsersReadByID(c buffalo.Context) error {
 	id := c.Param("id")
 	user := models.User{}
-	err := models.DB.Select("id, username, created_at, updated_at").Find(&user, id)
+	err := c.Value("tx").(*pop.Connection).Select("id, username, created_at, updated_at").Find(&user, id)
 	if err != nil {
 		log.SysLog.WithField("err", err).Error("cannot find entity")
 		response.SendNotFoundError(c, err)
