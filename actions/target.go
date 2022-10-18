@@ -10,13 +10,14 @@ import (
 	"tracky/services"
 
 	"github.com/gobuffalo/buffalo"
+	"github.com/gobuffalo/pop/v6"
 )
 
 type TargetResource struct{}
 
 func (t TargetResource) List(c buffalo.Context) error {
 	target := &models.Targets{}
-	if err := services.GetAllTargets(target); err != nil {
+	if err := services.GetAllTargets(c.Value("tx").(*pop.Connection), target); err != nil {
 		return response.SendGeneralError(c, err)
 	}
 	return response.SendOKResponse(c, target)
@@ -25,7 +26,7 @@ func (t TargetResource) List(c buffalo.Context) error {
 func (t TargetResource) Show(c buffalo.Context) error {
 	id := c.Param("target_id")
 	target := &models.Target{}
-	if err := services.GetTargetByID(target, id); err != nil {
+	if err := services.GetTargetByID(c.Value("tx").(*pop.Connection), target, id); err != nil {
 		log.SysLog.WithField("err", err).Error("cannot find entity")
 		return response.SendNotFoundError(c, err)
 	}
@@ -40,7 +41,7 @@ func (t TargetResource) Create(c buffalo.Context) error {
 	}
 	target := &models.Target{}
 	json.Unmarshal([]byte(body), target)
-	if err = services.CreateTarget(target); err != nil {
+	if err = services.CreateTarget(c.Value("tx").(*pop.Connection), target); err != nil {
 		return response.SendBadRequestError(c, err)
 	}
 	return response.SendOKResponse(c, target)
@@ -48,7 +49,7 @@ func (t TargetResource) Create(c buffalo.Context) error {
 
 func (t TargetResource) Destroy(c buffalo.Context) error {
 	id := c.Param("target_id")
-	if err := services.DestroyTarget(id); err != nil {
+	if err := services.DestroyTarget(c.Value("tx").(*pop.Connection), id); err != nil {
 		return response.SendGeneralError(c, err)
 	}
 	return response.SendOKResponse(c, nil)
@@ -66,7 +67,7 @@ func (t TargetResource) Update(c buffalo.Context) error {
 	json.Unmarshal([]byte(body), target)
 	targetToUpdate.Description = target.Description
 	targetToUpdate.Name = target.Name
-	if err = services.UpdateTarget(id, targetToUpdate); err != nil {
+	if err = services.UpdateTarget(c.Value("tx").(*pop.Connection), id, targetToUpdate); err != nil {
 		return response.SendGeneralError(c, err)
 	}
 	return response.SendOKResponse(c, targetToUpdate)

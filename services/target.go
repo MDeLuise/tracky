@@ -3,26 +3,28 @@ package services
 import (
 	"tracky/log"
 	"tracky/models"
+
+	"github.com/gobuffalo/pop/v6"
 )
 
-func GetAllTargets(targets *models.Targets) error {
-	err := models.DB.All(targets)
+func GetAllTargets(tx *pop.Connection, targets *models.Targets) error {
+	err := tx.All(targets) 
 	if err != nil {
 		log.SysLog.WithField("err", err).Error("error while connecting to DB")
 	}
 	return err
 }
 
-func GetTargetByID(target *models.Target, id string) error {
-	err := models.DB.Eager().Find(target, id)
+func GetTargetByID(tx *pop.Connection, target *models.Target, id string) error {
+	err := tx.Eager().Find(target, id)
 	if err != nil {
 		log.SysLog.WithField("err", err).Error("cannot find entity")
 	}
 	return err
 }
 
-func CreateTarget(toCreate *models.Target) error {
-	vErr, err := models.DB.ValidateAndCreate(toCreate)
+func CreateTarget(tx *pop.Connection, toCreate *models.Target) error {
+	vErr, err := tx.ValidateAndCreate(toCreate)
 	if err != nil {
 		log.SysLog.WithField("err", err).Error("entity not valid")
 		return err
@@ -34,14 +36,14 @@ func CreateTarget(toCreate *models.Target) error {
 	return nil
 }
 
-func UpdateTarget(id string, updated *models.Target) error {
+func UpdateTarget(tx *pop.Connection, id string, updated *models.Target) error {
 	targetToUpdate := &models.Target{}
-	if err := GetTargetByID(targetToUpdate, id); err != nil {
+	if err := GetTargetByID(tx, targetToUpdate, id); err != nil {
 		return err
 	}
 	targetToUpdate.Name = updated.Name
 	targetToUpdate.Description = updated.Description
-	vErr, err := models.DB.ValidateAndUpdate(targetToUpdate)
+	vErr, err := tx.ValidateAndUpdate(targetToUpdate)
 	if vErr.HasAny() {
 		log.SysLog.WithField("vErr", vErr).Error("entity not valid")
 		return vErr
@@ -52,23 +54,23 @@ func UpdateTarget(id string, updated *models.Target) error {
 	return nil
 }
 
-func DestroyTarget(id string) error {
+func DestroyTarget(tx *pop.Connection, id string) error {
 	targetToDestroy := &models.Target{}
-	err := GetTargetByID(targetToDestroy, id)
+	err := GetTargetByID(tx, targetToDestroy, id)
 	if err != nil {
 		log.SysLog.WithField("err", err).Error("cannot find entity")
 		return err
 	}
-	if err = models.DB.Destroy(targetToDestroy); err != nil {
+	if err = tx.Destroy(targetToDestroy); err != nil {
 		log.SysLog.WithField("err", err).Error("error while destroying entity")
 		return err
 	}
 	return nil
 }
 
-func GetLikedObservations(t *models.Target) (*models.Observations, error) {
+func GetLikedObservations(tx *pop.Connection, t *models.Target) (*models.Observations, error) {
 	linkedObservations := &models.Observations{}
-	if err := models.DB.Where("target_id = ?", t.ID).All(linkedObservations); err != nil {
+	if err := tx.Where("target_id = ?", t.ID).All(linkedObservations); err != nil {
 		return nil, err
 	}
 	return linkedObservations, nil

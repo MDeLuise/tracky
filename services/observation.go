@@ -3,26 +3,28 @@ package services
 import (
 	"tracky/log"
 	"tracky/models"
+
+	"github.com/gobuffalo/pop/v6"
 )
 
-func GetAllObservation(Observation *models.Observations) error {
-	err := models.DB.All(Observation)
+func GetAllObservation(tx *pop.Connection, Observation *models.Observations) error {
+	err := tx.All(Observation)
 	if err != nil {
 		log.SysLog.WithField("err", err).Error("error while connecting to DB")
 	}
 	return err
 }
 
-func GetObservationByID(observation *models.Observation, id string) error {
-	err := models.DB.Find(observation, id)
+func GetObservationByID(tx *pop.Connection, observation *models.Observation, id string) error {
+	err := tx.Find(observation, id)
 	if err != nil {
 		log.SysLog.WithField("err", err).Error("cannot find entity")
 	}
 	return err
 }
 
-func CreateObservation(toCreate *models.Observation) error {
-	vErr, err := models.DB.ValidateAndCreate(toCreate)
+func CreateObservation(tx *pop.Connection, toCreate *models.Observation) error {
+	vErr, err := tx.ValidateAndCreate(toCreate)
 	if err != nil {
 		log.SysLog.WithField("err", err).Error("entity not valid")
 		return err
@@ -34,15 +36,15 @@ func CreateObservation(toCreate *models.Observation) error {
 	return nil
 }
 
-func UpdateObservation(id string, updated *models.Observation) error {
+func UpdateObservation(tx *pop.Connection, id string, updated *models.Observation) error {
 	ObservationToUpdate := &models.Observation{}
-	if err := GetObservationByID(ObservationToUpdate, id); err != nil {
+	if err := GetObservationByID(tx, ObservationToUpdate, id); err != nil {
 		return err
 	}
 	ObservationToUpdate.Value = updated.Value
 	ObservationToUpdate.Time = updated.Time
 	ObservationToUpdate.TargetID = updated.TargetID
-	vErr, err := models.DB.ValidateAndUpdate(ObservationToUpdate)
+	vErr, err := tx.ValidateAndUpdate(ObservationToUpdate)
 	if vErr.HasAny() {
 		log.SysLog.WithField("vErr", vErr).Error("entity not valid")
 		return vErr
@@ -53,14 +55,14 @@ func UpdateObservation(id string, updated *models.Observation) error {
 	return nil
 }
 
-func DestroyObservation(id string) error {
+func DestroyObservation(tx *pop.Connection, id string) error {
 	ObservationToDestroy := &models.Observation{}
-	err := GetObservationByID(ObservationToDestroy, id)
+	err := GetObservationByID(tx, ObservationToDestroy, id)
 	if err != nil {
 		log.SysLog.WithField("err", err).Error("cannot find entity")
 		return err
 	}
-	if err = models.DB.Destroy(ObservationToDestroy); err != nil {
+	if err = tx.Destroy(ObservationToDestroy); err != nil {
 		log.SysLog.WithField("err", err).Error("error while destroying entity")
 		return err
 	}

@@ -8,12 +8,13 @@ import (
 	"tracky/services"
 
 	"github.com/gobuffalo/buffalo"
+	"github.com/gobuffalo/pop/v6"
 )
 
 func TargetMean(c buffalo.Context) error {
 	targetID := c.Param("target_id")
 	target := &models.Target{}
-	if err := services.GetTargetByID(target, targetID); err != nil {
+	if err := services.GetTargetByID(c.Value("tx").(*pop.Connection), target, targetID); err != nil {
 		return response.SendNotFoundError(c, err)
 	}
 	return response.SendOKResponse(c, services.CalcMean(target))
@@ -27,7 +28,7 @@ func TargetMeanAt(c buffalo.Context) error {
 		return response.SendBadRequestError(c, err)
 	}
 	target := &models.Target{}
-	if err := services.GetTargetByID(target, targetID); err != nil {
+	if err := services.GetTargetByID(c.Value("tx").(*pop.Connection), target, targetID); err != nil {
 		return response.SendNotFoundError(c, err)
 	}
 	return response.SendOKResponse(c, services.CalcMeanAt(target, numOflastValues))
@@ -36,7 +37,7 @@ func TargetMeanAt(c buffalo.Context) error {
 func TargetLastIncrement(c buffalo.Context) error {
 	targetID := c.Param("target_id")
 	target := &models.Target{}
-	if err := services.GetTargetByID(target, targetID); err != nil {
+	if err := services.GetTargetByID(c.Value("tx").(*pop.Connection), target, targetID); err != nil {
 		return response.SendNotFoundError(c, err)
 	}
 	return response.SendOKResponse(c, services.CalcLastIncr(target))
