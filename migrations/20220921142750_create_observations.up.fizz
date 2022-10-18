@@ -1,6 +1,6 @@
 create_table("observations") {
 	t.Column("id", "uuid", {primary: true})
-	t.Column("value", "numeric(5,2)")
+	t.Column("value", "numeric(9,3)")
 	t.Column("time", "timestamp")
 	t.Column("target_id", "uuid")
 	t.Timestamps()
