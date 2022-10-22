@@ -46,13 +46,13 @@ func createToken(userID, secret string, refresh bool, expiration int64) (string,
 	return tokenString, nil
 }
 
-func IsTokenValid(token string) bool {
-	_, err := parseToken(token)
+func IsTokenValid(token string, refresh bool) bool {
+	_, err := parseToken(token, refresh)
 	return err == nil
 }
 
-func GetTokenClaim(token, claim string) (interface{}, error) {
-	parsedToken, err := parseToken(token)
+func GetTokenClaim(token, claim string, refresh bool) (interface{}, error) {
+	parsedToken, err := parseToken(token, refresh)
 	if err != nil {
 		log.SysLog.WithField("err", err).Error("error parsing token")
 		return nil, err
@@ -60,8 +60,8 @@ func GetTokenClaim(token, claim string) (interface{}, error) {
 	return parsedToken.Claims.(jwt.MapClaims)[claim], nil
 }
 
-func GetTokenClaims(token string) (interface{}, error) {
-	parsedToken, err := parseToken(token)
+func GetTokenClaims(token string, refresh bool) (interface{}, error) {
+	parsedToken, err := parseToken(token, refresh)
 	if err != nil {
 		log.SysLog.WithField("err", err).Error("error parsing token")
 		return nil, err
@@ -69,8 +69,22 @@ func GetTokenClaims(token string) (interface{}, error) {
 	return parsedToken.Claims.(jwt.MapClaims), nil
 }
 
-func parseToken(token string) (*jwt.Token, error) {
-	secret := os.Getenv("JWT_REFRESH_SECRET")
+func GetExpiration(token string, refresh bool) (time.Time, error) {
+	parsedToken, err := parseToken(token, refresh)
+	if err != nil {
+		log.SysLog.WithField("err", err).Error("error parsing token")
+		return time.Now(), err
+	}
+	return time.Unix(int64(parsedToken.Claims.(jwt.MapClaims)["exp"].(float64)), 0), nil
+}
+
+func parseToken(token string, refresh bool) (*jwt.Token, error) {
+	var secret string
+	if !refresh {
+		secret = os.Getenv("JWT_SECRET")
+	} else {
+		secret = os.Getenv("JWT_REFRESH_SECRET")
+	}
 	return jwt.Parse(token,
 		func(token *jwt.Token) (interface{}, error) {
 			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {

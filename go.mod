@@ -23,6 +23,11 @@ require (
 )
 
 require (
+	github.com/cockroachdb/cockroach-go v2.0.1+incompatible // indirect
+	github.com/gobuffalo/genny v0.6.0 // indirect
+	github.com/gobuffalo/packd v1.0.1 // indirect
+	github.com/gobuffalo/pop v4.13.1+incompatible // indirect
+	github.com/lib/pq v1.10.6 // indirect
 	github.com/onsi/ginkgo v1.16.5 // indirect
 	github.com/onsi/gomega v1.20.2 // indirect
 	github.com/serenize/snaker v0.0.0-20201027110005-a7ad2135616e // indirect
