@@ -22,5 +22,4 @@ RUN buffalo build --static -o /bin/app
 ENV ADDR=0.0.0.0
 EXPOSE 3000
 
-#CMD exec /bin/app
 ENTRYPOINT [ "./deployment/run-server.sh" ]

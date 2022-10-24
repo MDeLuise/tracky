@@ -25,15 +25,15 @@ If you want to use the release version:
 In order to make the service run follow the following steps.
 
 ### Snapshot version
-* create the needed [configuration variables](#configuration-variables) inside an `.env` file or export them directly from the shell
+* create the needed [configuration variables](#configuration-variables) inside an `.env` file
 * start a postgres server on `5432`
 * [optional] if the database is not initialized yet, run `buffalo pop create -a && buffalo pop migrate`
 * run `buffalo dev`
 * create the [application user](#user-creation)
 
 ### Release version
-* create the needed [configuration variables](#configuration-variables) inside an `.env` file or export them directly from the shell
-* from the `deployment` directory run `docker-compose up`
+* create the needed [configuration variables](#configuration-variables) inside an `.env` file
+* from the `deployment` directory run `docker-compose -env <env-file> up` (adding `--profile debug` will startup even a `pgAdmin` instance)
 * create the [application user](#user-creation)
 
 ### Configuration variables
@@ -50,14 +50,13 @@ LOG_LEVEL = "<verbosity>" # can be trace, debug, info, warn, error
 ### User creation
 In order to access the application resources, a user is needed.
 The user can be created via CLI or via database administration system (e.g. `pgAdmin`):
-* via CLI executes the following commands, replacing the `USERNAME`, `PASSWORD` and `SALT` as wanted:
+* via CLI executes the following commands, replacing the `USERNAME` and `PASSWORD` as wanted:
     ```
     $ psql -U postgres -d tracky_development -c "CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\""
-
     $ psql -U postgres -d tracky_development -c "CREATE EXTENSION IF NOT EXISTS \"pgcrypto\""
-
-    $ psql -U postgres -d tracky_development -c "INSERT INTO users (id, username, password, created_at, updated_at) VALUES (uuid_generate_v1(), '<USERNAME>', crypt('<PASSWORD>', gen_salt('<SALT>')), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);"
+    $ psql -U postgres -d tracky_development -c "INSERT INTO users (id, username, password, created_at, updated_at) VALUES (uuid_generate_v1(), '<USERNAME>', crypt('<PASSWORD>', gen_salt('bf')), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);"
     ```
+    If postgres is running in a container (e.g. becose run via `docker-compose-up`), the prefix the aboce command with `docker exec -it deployment-db-1`.
 
 * via database administration system: execute the above commands from the system user interface after connecting to the db.
 
