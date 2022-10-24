@@ -3,7 +3,7 @@ Tracky is a self-hosted, open source tracker service.
 It is used to monitor how a `target`'s values change over time.
 
 ## Why Tracky?
-I'm Something of a Scientist Myself as Norman Osborn says. I enjoy keeping track of a variety of things, including gas prices, mileage, weight, etc.
+_I'm Something of a Scientist Myself_ as Norman Osborn says. I enjoy keeping track of a variety of things, including gas prices, mileage, weight, etc.
 I ended up with numerous excel files that were remarkably similar to one another.
 Therefore, I made the decision to create an application that can combine all the functionality I had in the excel files with additional features.
 
@@ -25,35 +25,44 @@ If you want to use the release version:
 In order to make the service run follow the following steps.
 
 ### Snapshot version
-* create an `.env` file add the appropriate settings to it:
-```
-JWT_SECRET="<secret key used to encrypt the access token>"
-ACCESS_TOKEN_EXPIRATION_SECONDS=<access token expiration expressed in seconds>
-
-JWT_REFRESH_SECRET="<secret key used to encrypt the refresh token>"
-REFRESH_TOKEN_EXPIRATION_SECONDS=<refresh token expiration expressed in seconds>
-
-LOG_LEVEL="<verbosity>" # can be trace, debug, info, warn, error
-```
+* create the needed [configuration variables](#configuration-variables) inside an `.env` file or export them directly from the shell
 * start a postgres server on `5432`
 * [optional] if the database is not initialized yet, run `buffalo pop create -a && buffalo pop migrate`
 * run `buffalo dev`
+* create the [application user](#user-creation)
 
 ### Release version
-* create an `.env` file add the appropriate settings to it:
-```
-JWT_SECRET="<secret key used to encrypt the access token>"
-ACCESS_TOKEN_EXPIRATION_SECONDS=<access token expiration expressed in seconds>
-
-JWT_REFRESH_SECRET="<secret key used to encrypt the refresh token>"
-REFRESH_TOKEN_EXPIRATION_SECONDS=<refresh token expiration expressed in seconds>
-
-LOG_LEVEL="<verbosity>" # can be trace, debug, info, warn, error
-```
+* create the needed [configuration variables](#configuration-variables) inside an `.env` file or export them directly from the shell
 * from the `deployment` directory run `docker-compose up`
+* create the [application user](#user-creation)
+
+### Configuration variables
+```
+JWT_SECRET = "<secret key used to encrypt the access token>"
+ACCESS_TOKEN_EXPIRATION_SECONDS = <access token expiration expressed in seconds>
+
+JWT_REFRESH_SECRET = "<secret key used to encrypt the refresh token>"
+REFRESH_TOKEN_EXPIRATION_SECONDS = <refresh token expiration expressed in seconds>
+
+LOG_LEVEL = "<verbosity>" # can be trace, debug, info, warn, error
+```
+
+### User creation
+In order to access the application resources, a user is needed.
+The user can be created via CLI or via database administration system (e.g. `pgAdmin`):
+* via CLI executes the following commands, replacing the `USERNAME`, `PASSWORD` and `SALT` as wanted:
+    ```
+    $ psql -U postgres -d tracky_development -c "CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\""
+
+    $ psql -U postgres -d tracky_development -c "CREATE EXTENSION IF NOT EXISTS \"pgcrypto\""
+
+    $ psql -U postgres -d tracky_development -c "INSERT INTO users (id, username, password, created_at, updated_at) VALUES (uuid_generate_v1(), '<USERNAME>', crypt('<PASSWORD>', gen_salt('<SALT>')), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);"
+    ```
+
+* via database administration system: execute the above commands from the system user interface after connecting to the db.
 
 ## Client
-It's possible to handle the `targets` and the `values` via [rest-api](#endpoint) by using simply this repository, which hosts the server's backend.
+It's possible to handle the `targets` and the `values` via [rest-api](#endpoints) by using simply this repository, which hosts the server's backend.
 Visit the [provided client](https://github.com/MDeLuise/tracky-client) repository to utilize the service via mobile app and web app.
 
 ## Endpoints

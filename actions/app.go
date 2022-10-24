@@ -72,7 +72,7 @@ func App() *buffalo.App {
 		app.Use(AuthMiddleware)
 
 		// Disable Auth Middleware in these fuctions
-		app.Middleware.Skip(AuthMiddleware, AuthLogin, AuthRefresh, UsersCreate)
+		app.Middleware.Skip(AuthMiddleware, AuthLogin, AuthRefresh)
 
 		app.Resource("/target", TargetResource{})
 		app.Resource("/value", ObservationResource{})
@@ -85,11 +85,6 @@ func App() *buffalo.App {
 		s.GET("/mean/{target_id}", TargetMean)
 		s.GET("/mean/{target_id}/{at}", TargetMeanAt)
 		s.GET("/increment/{target_id}", TargetLastIncrement)
-
-		// just for develop purpose, to delete in production
-		u := app.Group("/user")
-		u.POST("/", UsersCreate)
-		u.GET("/", UsersRead)
 	}
 
 	return app
