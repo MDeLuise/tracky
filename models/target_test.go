@@ -31,9 +31,9 @@ func (ms *ModelSuite) Test_TargetWithDuplicatedNameIllegal() {
 		ms.Fail("error while retrieving target: %s", err)
 	}
 	toTest := Target{
-		Name: target.Name,
-		CreatedAt:   time.Now(),
-		UpdatedAt:   time.Now(),
+		Name:      target.Name,
+		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
 	}
 	vErr, err := toTest.Validate(ms.DB)
 	ms.NoError(err)

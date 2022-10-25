@@ -3,6 +3,7 @@ package actions
 import (
 	"tracky/locales"
 	"tracky/models"
+	"tracky/services"
 
 	"github.com/gobuffalo/buffalo"
 	"github.com/gobuffalo/buffalo-pop/v3/pop/popmw"
@@ -69,13 +70,14 @@ func App() *buffalo.App {
 		AuthMiddleware := tokenauth.New(tokenauth.Options{})
 
 		// Adding to my api the function.
-		app.Use(AuthMiddleware)
+		app.Use(services.ApiKeyAuthenticationIfExists, AuthMiddleware)
 
 		// Disable Auth Middleware in these fuctions
 		app.Middleware.Skip(AuthMiddleware, AuthLogin, AuthRefresh)
 
 		app.Resource("/target", TargetResource{})
 		app.Resource("/value", ObservationResource{})
+		app.Resource("/key", ApiKeyResource{})
 
 		a := app.Group("/auth")
 		a.POST("/login", AuthLogin)

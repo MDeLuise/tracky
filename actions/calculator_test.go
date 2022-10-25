@@ -13,7 +13,7 @@ func (as *ActionSuite) Test_StatsEndpointShouldBeAuthenticated() {
 	var responses = make([]*httptest.JSONResponse, 0)
 	responses = append(responses, as.JSON(statsBaseURL+"/mean/42").Get())
 	responses = append(responses, as.JSON(statsBaseURL+"/mean/42/42").Get())
-    responses = append(responses, as.JSON(statsBaseURL+"/increment/42").Get())
+	responses = append(responses, as.JSON(statsBaseURL+"/increment/42").Get())
 
 	for _, res := range responses {
 		as.Equal(http.StatusUnauthorized, res.Code)

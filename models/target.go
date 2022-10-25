@@ -19,11 +19,6 @@ type Target struct {
 	UpdatedAt    time.Time     `json:"-" db:"updated_at"`
 }
 
-func (t Target) String() string {
-	jt, _ := json.Marshal(t)
-	return string(jt)
-}
-
 type Targets []Target
 
 func (t Targets) String() string {

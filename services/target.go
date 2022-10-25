@@ -8,7 +8,7 @@ import (
 )
 
 func GetAllTargets(tx *pop.Connection, targets *models.Targets) error {
-	err := tx.All(targets) 
+	err := tx.All(targets)
 	if err != nil {
 		log.SysLog.WithField("err", err).Error("error while connecting to DB")
 	}

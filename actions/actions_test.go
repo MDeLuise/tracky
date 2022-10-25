@@ -17,6 +17,7 @@ const (
 	fixtureTargetID2      = "b6e6ee74-1fb8-433e-a677-9befe3f2856b"
 	fixtureObservationID1 = "67434615-815d-428f-8bd7-fdbd445341b5"
 	fixtureObservationID2 = "42434615-815d-428f-8bd7-fdbd445341d5"
+	fixtureApiKeyID1      = "6ba7b810-9dad-11d1-80b4-00c04fd430c8"
 )
 
 type ActionSuite struct {

@@ -68,9 +68,9 @@ func AuthLogin(c buffalo.Context) error {
 		return response.SendGeneralError(c, err)
 	}
 	return response.SendOKResponse(c, map[string]string{
-		"token": token,
-		"refresh_token": refreshToken,
-		"token_expires_on": accessExp.String(),
+		"token":                    token,
+		"refresh_token":            refreshToken,
+		"token_expires_on":         accessExp.String(),
 		"refresh_token_expires_on": refreshExp.String(),
 	})
 }
@@ -113,9 +113,9 @@ func AuthRefresh(c buffalo.Context) error {
 		return response.SendGeneralError(c, err)
 	}
 	return response.SendOKResponse(c, map[string]string{
-		"token": newToken,
-		"refresh_token": newRefreshToken,
-		"token_expires_on": accessExp.String(),
+		"token":              newToken,
+		"refresh_token":      newRefreshToken,
+		"token_expires_on":   accessExp.String(),
 		"refresh_expires_on": refreshExp.String(),
 	})
 }

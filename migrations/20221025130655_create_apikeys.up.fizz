@@ -1,0 +1,6 @@
+create_table("api_keys") {
+	t.Column("id", "uuid", {primary: true})
+	t.Column("value", "string")
+	t.Column("user_id", "uuid")
+	t.Timestamps()
+}

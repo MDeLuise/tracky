@@ -28,6 +28,23 @@ name = "load test data"
       created_at = "<%= now() %>"
       updated_at = "<%= now() %>"
 
+    [[scenario.table.row]]
+      id = "6ba7b810-9dad-11d1-80b4-00c04fd530d9"
+      username = "admin1"
+      password = "$2a$10$CcUb8tc6PTqG/i4DYwmY8etSSua4HqJnlJOkkbMEnGWv5L5ltitwG"
+      created_at = "<%= now() %>"
+      updated_at = "<%= now() %>"
+
+  [[scenario.table]]
+    name = "api_keys"
+
+    [[scenario.table.row]]
+      id = "6ba7b810-9dad-11d1-80b4-00c04fd430c8"
+      user_id = "6ba7b810-9dad-11d1-80b4-00c04fd530d9"
+      value = "cb6a6rr74-1hd9-433e-a677-9befe3f2856a"
+      created_at = "<%= now() %>"
+      updated_at = "<%= now() %>"
+
   [[scenario.table]]
     name = "observations"
 
