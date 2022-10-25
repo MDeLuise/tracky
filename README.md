@@ -56,7 +56,7 @@ The user can be created via CLI or via database administration system (e.g. `pgA
     $ psql -U postgres -d tracky_development -c "CREATE EXTENSION IF NOT EXISTS \"pgcrypto\""
     $ psql -U postgres -d tracky_development -c "INSERT INTO users (id, username, password, created_at, updated_at) VALUES (uuid_generate_v1(), '<USERNAME>', crypt('<PASSWORD>', gen_salt('bf')), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);"
     ```
-    If postgres is running in a container (e.g. becose run via `docker-compose-up`), the prefix the aboce command with `docker exec -it deployment-db-1`.
+    If postgres is running in a container (e.g. becose run via `docker-compose-up`), the prefix the above command with `docker exec -it deployment-db-1`.
 
 * via database administration system: execute the above commands from the system user interface after connecting to the db.
 
