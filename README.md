@@ -60,6 +60,11 @@ The user can be created via CLI or via database administration system (e.g. `pgA
 
 * via database administration system: execute the above commands from the system user interface after connecting to the db.
 
+### Authentication
+Authentication can be done via jwt or via api key:
+* jwt: pass `Authentication: Bearer <token>` in the requests' header
+* api key: pass `key=<api_key>` in the requests' url
+
 ## Client
 It's possible to handle the `targets` and the `values` via [rest-api](#endpoints) by using simply this repository, which hosts the server's backend.
 Visit the [provided client](https://github.com/MDeLuise/tracky-client) repository to utilize the service via mobile app and web app.
@@ -70,6 +75,13 @@ These are the provided enpoints
 ### Login
 * `POST /login` `{username: "foo", password: "bar"}` - get access and refresh token
 * `POST /refresh` `{username: "foo", password: "bar"}` - user the refresh token to take new access and refresh tokens
+
+### Api Key
+* `GET /key` - get all the keys
+* `GET /key/{id}` - get the key with specified id
+* `DELETE /key/{id}` - delete the key with specified id
+* `POST /key/` - create a key
+
 ### Target
 * `GET /target` - get all the targets
 * `GET /target/{id}` - get the target with specified id
