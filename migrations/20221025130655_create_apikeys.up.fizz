@@ -3,4 +3,6 @@ create_table("api_keys") {
 	t.Column("value", "string")
 	t.Column("user_id", "uuid")
 	t.Timestamps()
+
+	t.ForeignKey("user_id", {"users": ["id"]}, {"on_delete": "cascade"})
 }

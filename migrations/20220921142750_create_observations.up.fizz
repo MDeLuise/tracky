@@ -4,4 +4,6 @@ create_table("observations") {
 	t.Column("time", "timestamp")
 	t.Column("target_id", "uuid")
 	t.Timestamps()
+
+	t.ForeignKey("target_id", {"targets": ["id"]}, {"on_delete": "cascade"})
 }

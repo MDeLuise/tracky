@@ -60,12 +60,3 @@ func (t *Target) ValidateCreate(tx *pop.Connection) (*validate.Errors, error) {
 func (t *Target) ValidateUpdate(tx *pop.Connection) (*validate.Errors, error) {
 	return validate.NewErrors(), nil
 }
-
-func (t *Target) BeforeDestroy(tx *pop.Connection) error {
-	linkedObservations := &Observations{}
-	err := DB.Where("target_id = ?", t.ID).All(linkedObservations)
-	if err != nil {
-		return err
-	}
-	return DB.Destroy(linkedObservations)
-}
