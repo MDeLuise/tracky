@@ -24,6 +24,18 @@ func (ms *ModelSuite) Test_TargetWithoutDescriptionLegal() {
 	ms.Assert().False(vErr.HasAny())
 }
 
+func (ms *ModelSuite) Test_TargetWithoutUnitLegal() {
+	toTest := Target{
+		Name:        "foo",
+		Description: "bar",
+		CreatedAt:   time.Now(),
+		UpdatedAt:   time.Now(),
+	}
+	vErr, err := toTest.Validate(ms.DB)
+	ms.NoError(err)
+	ms.Assert().False(vErr.HasAny())
+}
+
 func (ms *ModelSuite) Test_TargetWithDuplicatedNameIllegal() {
 	ms.LoadFixture("load test data")
 	target := Target{}

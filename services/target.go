@@ -43,6 +43,7 @@ func UpdateTarget(tx *pop.Connection, id string, updated *models.Target) error {
 	}
 	targetToUpdate.Name = updated.Name
 	targetToUpdate.Description = updated.Description
+	targetToUpdate.Unit = updated.Unit
 	vErr, err := tx.ValidateAndUpdate(targetToUpdate)
 	if vErr.HasAny() {
 		log.SysLog.WithField("vErr", vErr).Error("entity not valid")

@@ -14,6 +14,7 @@ type Target struct {
 	ID           uuid.UUID     `json:"id" db:"id"`
 	Name         string        `json:"name" db:"name"`
 	Description  string        `json:"description" db:"description"`
+	Unit         string        `json:"unit" db:"unit"`
 	Observations []Observation `json:"values,omitempty" has_many:"observations" order_by:"time desc"`
 	CreatedAt    time.Time     `json:"-" db:"created_at"`
 	UpdatedAt    time.Time     `json:"-" db:"updated_at"`

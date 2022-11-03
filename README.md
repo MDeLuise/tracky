@@ -131,8 +131,8 @@ Further paragraphs come after blank lines.
 
 
 ## Future update
-- [ ] Add targets unit of measurement 
 - [ ] Multi users support
 - [ ] Export of values
 - [ ] Filter values by start/end dates
 - [ ] Get last _n_ target's values
+- [x] Add targets unit of measurement 

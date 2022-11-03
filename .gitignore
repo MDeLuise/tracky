@@ -30,5 +30,3 @@ generated/
 !.yarn/releases
 !.yarn/sdks
 !.yarn/versions
-postgres/
-kanban.txt
