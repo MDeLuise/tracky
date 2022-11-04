@@ -33,7 +33,7 @@ In order to make the service run follow the following steps.
 
 ### Release version
 * create the needed [configuration variables](#configuration-variables) inside an `.env` file
-* from the `deployment` directory run `docker-compose -env <env-file> up` (adding `--profile debug` will startup even a `pgAdmin` instance)
+* from the `deployment` directory run `docker-compose --env-file <env-file> up` (adding `--profile debug` before `up` will startup even a `pgAdmin` instance)
 * create the [application user](#user-creation)
 
 ### Configuration variables
@@ -86,8 +86,8 @@ These are the provided enpoints
 * `GET /target` - get all the targets
 * `GET /target/{id}` - get the target with specified id
 * `DELETE /target/{id}` - delete the target with specified id
-* `PUT /target/{id}` `{name: "foo", description: "bar"}` - update the target with specified id
-* `POST /target/` `{name: "foo", description: "bar"}` - create a target
+* `PUT /target/{id}` `{name: "foo", description: "bar", unit: "$"}` - update the target with specified id
+* `POST /target/` `{name: "foo", description: "bar", unit: "$"}` - create a target
 
 ### Value
 * `GET /value` - get all the values
@@ -133,6 +133,6 @@ Further paragraphs come after blank lines.
 ## Future update
 - [ ] Multi users support
 - [ ] Export of values
-- [ ] Filter values by start/end dates
+- [ ] Filter values by start and end dates
 - [ ] Get last _n_ target's values
 - [x] Add targets unit of measurement 

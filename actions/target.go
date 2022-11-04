@@ -67,6 +67,7 @@ func (t TargetResource) Update(c buffalo.Context) error {
 	json.Unmarshal([]byte(body), target)
 	targetToUpdate.Description = target.Description
 	targetToUpdate.Name = target.Name
+	targetToUpdate.Unit = target.Unit
 	if err = services.UpdateTarget(c.Value("tx").(*pop.Connection), id, targetToUpdate); err != nil {
 		return response.SendGeneralError(c, err)
 	}
