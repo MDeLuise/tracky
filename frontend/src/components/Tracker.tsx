@@ -11,13 +11,14 @@ import EditIcon from '@mui/icons-material/Edit';
 import { alpha } from '@mui/material/styles';
 import EditObservation from "./EditObservation";
 import AddObservation from "./AddObservation";
+import { isSmallScreen } from "../common";
 
 function ConfirmationBox(props: {
     open: boolean,
     selected: number,
     close: () => void,
     clearSelected: () => void,
-    removeSelected: () => void
+    removeSelected: () => void;
 }) {
     return (
         <Dialog
@@ -47,7 +48,7 @@ function ConfirmationBox(props: {
                 </Button>
             </DialogActions>
         </Dialog>
-    )
+    );
 };
 
 function ObservationTableToolbar(props: {
@@ -55,7 +56,7 @@ function ObservationTableToolbar(props: {
     openDeleteConfirmDialog: () => void,
     openEditDialog: () => void,
     onEditSuccess: () => void,
-    onEditFails: (err: string) => void
+    onEditFails: (err: string) => void;
 }) {
     return (
         <Toolbar
@@ -102,7 +103,7 @@ function ObservationTableToolbar(props: {
                 </Tooltip>
             }
         </Toolbar>
-    )
+    );
 }
 
 function ObservationTableBody(props: {
@@ -114,7 +115,7 @@ function ObservationTableBody(props: {
     observations: observation[],
     selectedIds: Set<number>,
     setSelectedIds: (selected: Set<number>) => void,
-    setObservationToEdit: (ob: observation) => void
+    setObservationToEdit: (ob: observation) => void;
 }) {
     const formatLastObservationInstant = (ob: observation): string => {
         let lastObservationDate = new Date(ob.instant).toLocaleDateString();
@@ -127,7 +128,7 @@ function ObservationTableBody(props: {
                 <TableRow>
                     <TablePagination
                         rowsPerPageOptions={[25, 50, 100, { label: 'All', value: -1 }]}
-                        colSpan={3}
+                        colSpan={5}
                         count={props.totalElements}
                         rowsPerPage={props.requireElementsPerPage == props.totalElements ? -1 : props.requireElementsPerPage}
                         page={props.pageNo}
@@ -162,11 +163,13 @@ function ObservationTableBody(props: {
                                     props.setSelectedIds(new Set());
                                 }
                             }}
-                            checked={props.observations.length == props.selectedIds.size}
+                            checked={props.observations.length > 0 && props.observations.length == props.selectedIds.size}
+                            indeterminate={props.selectedIds.size > 0 && props.selectedIds.size < Math.min(props.totalElements, props.requireElementsPerPage)}
+                            disabled={props.totalElements == 0}
                         />
                     </TableCell>
                     <TableCell align="center">Value</TableCell>
-                    <TableCell align="center">Instant</TableCell>
+                    <TableCell align="center">Date</TableCell>
                     <TableCell align="center">Note</TableCell>
                 </TableRow>
             </TableHead>
@@ -199,7 +202,7 @@ function ObservationTableBody(props: {
                     </TableRow>
                 ))}
             </TableBody>
-        </Table>)
+        </Table>);
 }
 
 function ObservationTable(props: {
@@ -215,7 +218,7 @@ function ObservationTable(props: {
     requestor: AxiosInstance,
     trackers: tracker[],
     onEditSuccess: () => void,
-    onEditFails: (err: string) => void
+    onEditFails: (err: string) => void;
 }) {
     const [openEditDialog, setOpenEditDialog] = useState<boolean>(false);
     const [observationToEdit, setObservationToEdit] = useState<observation | undefined>();
@@ -255,12 +258,12 @@ function ObservationTable(props: {
                 </Box>
             </Box>
         </>
-    )
+    );
 }
 
 export default function Tracker(props: {
     isLoggedIn: () => boolean,
-    requestor: AxiosInstance
+    requestor: AxiosInstance;
 }) {
     const { trackerId } = useParams();
     const [error, setError] = useState<string>();
@@ -289,7 +292,7 @@ export default function Tracker(props: {
                 setObservations(fetchedObservations);
                 setTotalElements(response.data.totalElements);
             })
-            .catch(error => setError(error))
+            .catch(error => setError(error));
     };
 
     const removeSelectedObservations = (): void => {
@@ -305,7 +308,7 @@ export default function Tracker(props: {
                 setError(error);
                 setAlertMessage("Error while deleting observation(s)");
                 setAlertSeverity("error");
-            })
+            });
     };
 
     const editSuccess = (): void => {
@@ -334,7 +337,7 @@ export default function Tracker(props: {
             .then(response => {
                 getAllTrackers(response.data);
             })
-            .catch(error => setError(error))
+            .catch(error => setError(error));
     };
 
     const getAllTrackers = (total: number): void => {
@@ -346,7 +349,7 @@ export default function Tracker(props: {
                 });
                 setTrackers(fetchedTrackers);
             })
-            .catch(error => setError(error))
+            .catch(error => setError(error));
     };
 
     useEffect(() => {
@@ -356,7 +359,7 @@ export default function Tracker(props: {
 
     return (
         <>
-            <Navbar requestor={props.requestor}></Navbar>
+            <Navbar requestor={props.requestor} mobile={isSmallScreen()} />
             {error && <Typography variant="body1">{"error"}</Typography> ||
                 <>
                     <LineChart observations={observations.slice().reverse()} />
@@ -379,7 +382,10 @@ export default function Tracker(props: {
                         requestor={props.requestor}
                         trackerId={Number(trackerId)}
                         onSuccess={() => getObservation(0, 25)}
-                        style={{ marginTop: "30px" }}
+                        style={{
+                            marginTop: "30px",
+                            width: "90% !important",
+                        }}
                     />
                     <ObservationTable
                         fetchObservations={getObservation}

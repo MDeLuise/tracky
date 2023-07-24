@@ -29,15 +29,16 @@ export default function AddTracker(props: {
 
     return (
         <Box sx={{
+            maxWidth: "fit-content",
+            display: "flex",
+            backgroundImage: "linear-gradient(rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.05))",
+            padding: "15px",
+            borderRadius: "10px",
+            alignItems: "center",
+            gap: "30px",
+            margin: "30px auto",
+            flexWrap: "wrap",
             ...props.style,
-            ...{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                gap: "30px",
-                marginBottom: "20px",
-                flexWrap: "wrap"
-            }
         }}>
             <TextField label="Name" variant="standard" type="text" onChange={(target) => setTrackerName(target.currentTarget.value)} />
             <TextField label="Description" variant="standard" type="text" onChange={(target) => setTrackerDescription(target.currentTarget.value)} />

@@ -1,7 +1,9 @@
 import { Line } from "react-chartjs-2";
 import { observation } from "../interfaces";
+import { alpha, useTheme } from "@mui/material";
 
 export default function LineChart(props: { observations: observation[] }) {
+    const theme = useTheme();
     const formatLastObservationInstant = (ob: observation): string => {
         let lastObservationDate = new Date(ob.instant).toLocaleDateString();
         let lastObservationTime = new Date(ob.instant).toLocaleTimeString();
@@ -16,8 +18,8 @@ export default function LineChart(props: { observations: observation[] }) {
             {
                 label: props.observations.at(0)?.trackerName,
                 data: props.observations.map(ob => ob.value),
-                borderColor: 'rgb(255, 99, 132)',
-                backgroundColor: 'rgba(255, 99, 132, 0.5)',
+                borderColor: theme.palette.secondary.main,
+                backgroundColor: alpha(theme.palette.secondary.main, 0.5),
             },
         ],
     };

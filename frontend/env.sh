@@ -20,7 +20,7 @@ do
   echo "config $varname value..."
   # Read value of current variable if exists as Environment variable
   globalVarValue=$(printf '%s\n' "${!varName}")
-  if [[ globalVarValue -ne "" ]]; then
+  if [ ! -z $globalVarValue ]; then
     varValue=$globalVarValue;
     echo "found value of $varName in global vars ($varValue)";
   else

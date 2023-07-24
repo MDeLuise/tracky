@@ -9,7 +9,7 @@ import { Chart, CategoryScale } from "chart.js";
 import { NavigateFunction, useNavigate, useParams } from "react-router-dom";
 import AddObservation from "./AddObservation";
 import EditObservation from "./EditObservation";
-import LineChart from "./LineChart";
+import { isSmallScreen } from "../common";
 
 function ConfirmationBox(props: {
     open: boolean,
@@ -126,7 +126,7 @@ function ObservationTableBody(props: {
                 <TableRow>
                     <TablePagination
                         rowsPerPageOptions={[25, 50, 100, { label: 'All', value: -1 }]}
-                        colSpan={3}
+                        colSpan={5}
                         count={props.totalElements}
                         rowsPerPage={props.requireElementsPerPage == props.totalElements ? -1 : props.requireElementsPerPage}
                         page={props.pageNo}
@@ -151,6 +151,7 @@ function ObservationTableBody(props: {
                     <TableCell align="center">
                         <Checkbox
                             color="primary"
+                            indeterminate={props.selectedIds.size > 0 && props.selectedIds.size < Math.min(props.totalElements, props.requireElementsPerPage)}
                             inputProps={{
                                 'aria-label': 'select all observations',
                             }}
@@ -162,6 +163,7 @@ function ObservationTableBody(props: {
                                 }
                             }}
                             checked={props.observations.length == props.selectedIds.size}
+                            disabled={props.totalElements == 0}
                         />
                     </TableCell>
                     <TableCell align="center">Value</TableCell>
@@ -378,7 +380,7 @@ export default function Tracker(props: {
 
     return (
         <>
-            <Navbar requestor={props.requestor}></Navbar>
+            <Navbar requestor={props.requestor} mobile={isSmallScreen()} />
             {error && <Typography variant="body1">{"error"}</Typography> ||
                 <>
                     <Snackbar open={snackbarOpen} autoHideDuration={3000} onClose={handleClose}>

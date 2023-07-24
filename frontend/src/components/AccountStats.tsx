@@ -2,15 +2,19 @@ import { Typography, TableContainer, Paper, Table, TableHead, TableRow, TableCel
 import { AxiosInstance } from "axios";
 import { useEffect, useState } from "react";
 
-export default function AccountStats(props: { requestor: AxiosInstance, newData: number }) {
+export default function AccountStats(props: { requestor: AxiosInstance, newData: number; }) {
     const [stats, setStats] = useState<{}>({});
     const [error, setError] = useState<string>();
 
     const getStats = (): void => {
         props.requestor.get("account-stats")
             .then((res) => setStats(res.data))
-            .catch((error) => setError(error))
-    }
+            .catch((error) => setError(error));
+    };
+
+    const camelCaseToSeparate = (text: string): string => {
+        return `${text.charAt(0).toUpperCase()}${text.slice(1).replace(/([a-z](?=[A-Z]))/g, '$1 ').toLowerCase()}`;
+    };
 
     useEffect(() => {
         getStats();
@@ -34,7 +38,7 @@ export default function AccountStats(props: { requestor: AxiosInstance, newData:
                                 key={keyValArray[0]}
                                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                             >
-                                <TableCell>{keyValArray[0]}</TableCell>
+                                <TableCell>{camelCaseToSeparate(keyValArray[0])}</TableCell>
                                 <TableCell>{keyValArray[1] as string}</TableCell>
                             </TableRow>
                         ))}
@@ -42,5 +46,5 @@ export default function AccountStats(props: { requestor: AxiosInstance, newData:
                 </Table>
             </TableContainer>
         </>
-    )
+    );
 }

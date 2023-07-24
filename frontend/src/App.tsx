@@ -11,7 +11,7 @@ import React from "react";
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import Tracker from "./components/Tracker";
 import AllTrackers from "./components/AllTrackers";
-import {CssBaseline } from "@mui/material";
+import { CssBaseline } from "@mui/material";
 import AllObservations from "./components/AllObservations";
 import AddEntities from "./components/AddEntities";
 
@@ -85,17 +85,29 @@ export default function AppWithColorMode() {
             : {
               // palette values for dark mode
               primary: {
-                main: '#3f51b5',
+                main: 'rgb(244, 252, 123)',
               },
               secondary: {
-                main: '#f50057',
+                main: '#9932CC',
               },
               background: {
-                default: "#303030",
-                paper: "#424242",
+                default: "rgb(30, 39, 41)",
+                paper: "#1e2729",
               }
-            }),
-        }
+            })
+        },
+        typography: {
+          // fontFamily: "Raleway",//"Quicksand",
+          // body1: {
+          //   lineHeight: 1.5,
+          // },
+          // body2: {
+          //   lineHeight: 1.5,
+          // },
+        },
+        shape: {
+          borderRadius: 5,
+        },
       }),
     [mode],
   );

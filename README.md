@@ -7,7 +7,7 @@
   <a href="https://hub.docker.com/r/msdeluise/tracky-frontend"><img src="https://img.shields.io/docker/image-size/msdeluise/tracky-frontend?label=frontend%20image%20size&style=for-the-badge" alt="Docker frontend size"></a>
 </p>
 
-<p align="center">Tracky is a <b>self-hosted tracking service.</b><br>Useful to keep track of things like: gas prices, mileage, weight, electric bills, etc.</p>
+<p align="center">Tracky is a <b>self-hosted tracking service.</b><br>Useful to keep track of things like: gas prices, mileage, weight, electric bills, blood glucose levels, grocery prices, etc.</p>
 
 <p align="center"><a href="https://github.com/MDeLuise/tracky/#features-highlight">Features highlights</a> • <a href="https://github.com/MDeLuise/tracky/#getting-started">Getting started</a> • <a href="https://github.com/MDeLuise/tracky/#configuration">Configuration</a></p>
 
@@ -24,6 +24,7 @@
 * View all the tracker's value in a chart
 * Add, modify and delete values and trackers via REST API or GUI
 * 🔜 Group together values over time
+* 🔜 Dark/Light mode
 
 
 ## Getting started

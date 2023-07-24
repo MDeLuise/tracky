@@ -2,7 +2,7 @@ import { Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField, N
 import { observation, tracker } from "../interfaces";
 import { AxiosInstance } from "axios";
 import { DateTimePicker, LocalizationProvider } from "@mui/x-date-pickers";
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { useEffect, useState } from "react";
 import dayjs, { Dayjs } from "dayjs";
 
@@ -13,7 +13,7 @@ export default function EditObservation(props: {
     observation?: observation,
     requestor: AxiosInstance,
     onSuccess: () => void,
-    onFail: (error: string) => void
+    onFail: (error: string) => void;
 }) {
     const [observationValue, setObservationValue] = useState<number>(0);
     const [observationNote, setObservationNote] = useState<string>();
@@ -32,17 +32,17 @@ export default function EditObservation(props: {
             })
             .catch((error) => {
                 props.onFail(error);
-            })
+            });
     };
 
     useEffect(() => {
         if (props.observation != undefined) {
-            setObservationValue(props.observation.value)
-            setObservationDate(dayjs(props.observation.instant))
-            setObservationTrackerId(props.observation.trackerId)
+            setObservationValue(props.observation.value);
+            setObservationDate(dayjs(props.observation.instant));
+            setObservationTrackerId(props.observation.trackerId);
             setObservationNote(props.observation.note);
         }
-    }, [props.observation])
+    }, [props.observation]);
 
 
     return (
@@ -66,7 +66,7 @@ export default function EditObservation(props: {
                         onChange={(target) => setObservationTrackerId(Number(target.currentTarget.value))}
                     >
                         {props.trackers.map((tr: tracker) => {
-                            return <option key={tr.id} value={tr.id}>{tr.name}</option>
+                            return <option key={tr.id} value={tr.id}>{tr.name}</option>;
                         })}
                     </NativeSelect>
                 </FormControl>
@@ -83,7 +83,9 @@ export default function EditObservation(props: {
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DateTimePicker
                         defaultValue={dayjs(observationDate)}
-                        onChange={(newValue) => setObservationDate(newValue != null ? newValue : dayjs(new Date()))} />
+                        onChange={(newValue) => setObservationDate(newValue != null ? newValue : dayjs(new Date()))}
+                        format="DD/MM/YYYY, HH:mm"
+                    />
                 </LocalizationProvider>
                 <TextField
                     autoFocus
@@ -109,5 +111,5 @@ export default function EditObservation(props: {
                 </Button>
             </DialogActions>
         </Dialog>
-    )
+    );
 }

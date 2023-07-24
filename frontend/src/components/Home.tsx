@@ -10,7 +10,7 @@ import { Box, Fab, Typography } from "@mui/material";
 import AddObservation from "./AddObservation";
 import { tracker } from "../interfaces";
 import AccountStats from "./AccountStats";
-import AddIcon from '@mui/icons-material/Add';
+import { isSmallScreen } from "../common";
 
 export default function Home(props: { isLoggedIn: () => boolean, requestor: AxiosInstance; }) {
     let navigate: NavigateFunction = useNavigate();
@@ -62,33 +62,11 @@ export default function Home(props: { isLoggedIn: () => boolean, requestor: Axio
     }
 
     return (
-        <>
-            <Navbar requestor={props.requestor}></Navbar>
+        <Box sx={{
+            minHeight: "100vh",
+        }}>
+            <Navbar requestor={props.requestor} mobile={isSmallScreen()} />
 
-            {/* {windowSize.current[0] <= 1357 &&
-                <Fab
-                    color="primary"
-                    aria-label="add entity"
-                    onClick={() => navigate("/add")}
-                    sx={{
-                        position: "fixed",
-                        bottom: "20px",
-                        right: "20px"
-                    }}
-                >
-                    <AddIcon />
-                </Fab>
-                ||
-                <AddObservation
-                    requestor={props.requestor}
-                    trackers={trackers}
-                    onSuccess={() => {
-                        setObservationsAdded(observationsAdded + 1);
-                        getTrackers();
-                    }}
-                    style={{ marginTop: "30px" }}
-                />
-            } */}
             <AddObservation
                 requestor={props.requestor}
                 trackers={trackers}
@@ -96,9 +74,22 @@ export default function Home(props: { isLoggedIn: () => boolean, requestor: Axio
                     setObservationsAdded(observationsAdded + 1);
                     getTrackers();
                 }}
-                style={{ marginTop: "30px" }}
+                style={{
+                    width: "95% !important",
+                }}
             />
-            <Box id="outer-flex" style={{ display: 'flex', flexDirection: 'column', padding: '2vw', gap: "10px", minHeight: "93vh", justifyContent: "space-between" }}>
+            <Box
+                id="outer-flex"
+                style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    padding: '2vw',
+                    gap: "10px",
+                    justifyContent: "space-between",
+                    width: "95%",
+                    margin: "0 auto",
+                }}
+            >
                 <Box id="inner-flex" style={{ display: 'flex', width: '100%', justifyContent: "space-between" }}>
                     <Box>
                         <RecentTrackers requestor={props.requestor} trackers={trackers}></RecentTrackers>
@@ -108,11 +99,21 @@ export default function Home(props: { isLoggedIn: () => boolean, requestor: Axio
                         <AccountStats requestor={props.requestor} newData={observationsAdded} />
                     </Box>
                 </Box>
-                <Box id="credits" sx={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: "end" }}>
-                    <Typography variant="body1">Tracky is a project by <Link to="https://github.com/MDeLuise/tracky#tracky" target="_blank">MDeLuise</Link></Typography>
+                <Box id="credits"
+                    sx={{
+                        width: '100%',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        justifyContent: "end",
+                        marginTop: "40px",
+                    }}>
+                    <Typography variant="body1">
+                        Tracky is a project by <Link style={{opacity: ".8", textDecoration: "none", textTransform: "none", color: "inherit"}} to="https://github.com/MDeLuise" target="_blank">MDeLuise</Link>
+                    </Typography>
                     <Typography variant="body1">Current version: v{version}</Typography>
                 </Box>
             </Box>
-        </>
+        </Box>
     );
 }

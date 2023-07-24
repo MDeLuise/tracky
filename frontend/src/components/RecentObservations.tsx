@@ -41,7 +41,7 @@ export default function RecentObservations(props: { requestor: AxiosInstance, ad
                     <TableHead>
                         <TableRow>
                             <TableCell>Value</TableCell>
-                            <TableCell>Instant</TableCell>
+                            <TableCell>Date</TableCell>
                             <TableCell>Tracker</TableCell>
                         </TableRow>
                     </TableHead>

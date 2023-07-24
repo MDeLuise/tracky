@@ -11,13 +11,10 @@
         table-layout: "fixed";
         margin: "0 auto";
         min-width: none;
+        gap: 20px;
 
         table {
             min-width: initial;
         }
-    }
-
-    #stats {
-        margin-top: 20px;
     }
   }
