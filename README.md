@@ -2,12 +2,11 @@
   <img width="200px" src="images/tracky-logo.png" title="Tracky">
 </p>
 <p align="center">
-  <a href="https://github.com/MDeLuise/tracky/releases"><img src="https://img.shields.io/github/v/release/MDeLuise/tracky?label=Latest%20Release&style=for-the-badge" alt="Latest Release"></a>
-  <a href="https://hub.docker.com/r/msdeluise/tracky-backtend"><img src="https://img.shields.io/docker/image-size/msdeluise/tracky-backend?label=backend%20image%20size&style=for-the-badge" alt="Docker backend size"></a>
-  <a href="https://hub.docker.com/r/msdeluise/tracky-frontend"><img src="https://img.shields.io/docker/image-size/msdeluise/tracky-frontend?label=frontend%20image%20size&style=for-the-badge" alt="Docker frontend size"></a>
+  <img src="https://img.shields.io/github/checks-status/MDeLuise/tracky/main?style=for-the-badge&label=build&color=%239400D3" />
+<img src="https://img.shields.io/github/v/release/MDeLuise/tracky?style=for-the-badge&color=%239400D3" />
 </p>
 
-<p align="center">Tracky is a <b>self-hosted tracking service.</b><br>Useful to keep track of things like: gas prices, mileage, weight, electric bills, blood glucose levels, grocery prices, etc.</p>
+<p align="center">Tracky is a <b>self-hosted tracker service.</b><br>Useful to keep track of things like: gas prices, mileage, weight, bills, blood glucose levels, grocery prices, etc.</p>
 
 <p align="center"><a href="https://github.com/MDeLuise/tracky/#features-highlight">Features highlights</a> • <a href="https://github.com/MDeLuise/tracky/#getting-started">Getting started</a> • <a href="https://github.com/MDeLuise/tracky/#configuration">Configuration</a></p>
 
@@ -17,7 +16,7 @@
 </p>
 
 
-## Features Highlight
+## Features highlight
 * Create tracker in order to group different value with the same meaning
 * Add new values for the saved trackers
 * List all the tracker's values over time
@@ -74,13 +73,13 @@ services:
       - frontend
 ```
 
-Run the docker compose file, then the service will be available at `localhost:8080` (`localhost:8080/api` for the REST API).
+Run the docker compose file (`docker compose -f <file> up -d`), then the service will be available at `localhost:8080`, while the REST API will be available at `localhost:8080/api` (`localhost:8080/api/swagger-ui/index.html` for the documentation of them).
 
 <details>
 
   <summary>Run on a remote host</summary>
 
-  Please notice that running the `docker-compose` file from another machine change the way to connect to the server. For example, if you run the `docker-compose` on the machine with the local IP `192.168.1.100` then you have to change the backend url in the [REACT_APP_API_URL](#configurations) variable to `http://192.168.1.100:8080/api`. In this case, the frontend of the system will be available at `http:192.168.1.100:8080`, and the backend will be available at `http://192.168.1.100:8080/api`.
+  Please notice that running the `docker-compose` file from another machine change the way to connect to the server. For example, if you run the `docker-compose` on the machine with the local IP `192.168.1.100` then you have to change the backend url in the [REACT_APP_API_URL](#configurations) variable to `http://192.168.1.100:8080/api`. In this case, the frontend of the system will be available at `http://192.168.1.100:8080`, and the backend will be available at `http://192.168.1.100:8080/api`.
 </details>
 
 ### Setup without docker
@@ -99,8 +98,6 @@ The application was developed with being used with Docker in mind, thus this met
   `npm start`
 
 Then, the frontend of the system will be available at `http://localhost:3000`, and the backend at `http://localhost:8085/api`.
-
-&nbsp;
 
 
 ## Configuration
