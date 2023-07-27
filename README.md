@@ -8,13 +8,20 @@
 
 <p align="center">Tracky is a <b>self-hosted tracker service.</b><br>Useful to keep track of things like: gas prices, mileage, weight, bills, blood glucose levels, grocery prices, etc.</p>
 
-<p align="center"><a href="https://github.com/MDeLuise/tracky/#features-highlight">Features highlights</a> • <a href="https://github.com/MDeLuise/tracky/#getting-started">Getting started</a> • <a href="https://github.com/MDeLuise/tracky/#configuration">Configuration</a></p>
+<p align="center"><a href="https://github.com/MDeLuise/tracky/#why">Why?</a> • <a href="https://github.com/MDeLuise/tracky/#features-highlight">Features highlights</a> • <a href="https://github.com/MDeLuise/tracky/#getting-started">Getting started</a> • <a href="https://github.com/MDeLuise/tracky/#configuration">Configuration</a></p>
 
 <p align="center">
   <img src="/images/screenshot-desktop.png" width="45%" />
   <img src="/images/screenshot-mobile.png" width="45%" /> 
 </p>
 
+## Why?
+Tracky is a track application that helps you keep track of different values over time.
+
+I've always loves to keep track of different things: weight, car mileage, GPL prices, etc.
+So I ended up creating multiple excel files almost identical each other.
+
+Tracky takes care of this problem providing a system used to track the values and visualize them in a simple graph. It also provides a Graphical User Interface and the REST API, so the values can be updated from everywhere.
 
 ## Features highlight
 * Create tracker in order to group different value with the same meaning
