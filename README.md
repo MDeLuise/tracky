@@ -18,7 +18,7 @@
 ## Why?
 Tracky is a track application that helps you keep track of different values over time.
 
-I've always loves to keep track of different things: weight, car mileage, GPL prices, etc.
+I've always loves to keep track of different things: weight, bills, car mileage, GPL prices, etc.
 So I ended up creating multiple excel files almost identical each other.
 
 Tracky takes care of this problem providing a system used to track the values and visualize them in a simple graph. It also provides a Graphical User Interface and the REST API, so the values can be updated from everywhere.
@@ -86,7 +86,7 @@ Run the docker compose file (`docker compose -f <file> up -d`), then the service
 
   <summary>Run on a remote host</summary>
 
-  Please notice that running the `docker-compose` file from another machine change the way to connect to the server. For example, if you run the `docker-compose` on the machine with the local IP `192.168.1.100` then you have to change the backend url in the [REACT_APP_API_URL](#configurations) variable to `http://192.168.1.100:8080/api`. In this case, the frontend of the system will be available at `http://192.168.1.100:8080`, and the backend will be available at `http://192.168.1.100:8080/api`.
+  Please notice that running the `docker-compose` file from another machine change the way to connect to the server. For example, if you run the `docker-compose` on the machine with the local IP `192.168.1.100` then you have to change the backend url in the [API_URL](#configurations) variable to `http://192.168.1.100:8080/api`. In this case, the frontend of the system will be available at `http://192.168.1.100:8080`, and the backend will be available at `http://192.168.1.100:8080/api`.
 </details>
 
 ### Setup without docker
@@ -126,9 +126,9 @@ There are 2 configuration file available:
 
 * `deployment/frontend.env`: file containing the configuration for the frontend. An example of content is the following:
   ```
-  REACT_APP_API_URL=http://localhost:8080/api
+  API_URL=http://localhost:8080/api
   BROWSER=none
-  REACT_APP_PAGE_SIZE=25
+  PAGE_SIZE=25
   ```
   Change the properties values according to your system.
 

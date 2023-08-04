@@ -51,14 +51,14 @@ export default function Navbar(props: {
                 display: "flex",
                 flexDirection: "row",
                 width: "100vw",
-                padding: props.mobile ? "5px 15px" : "15px 50px",
+                padding: props.mobile ? "10px 15px" : "15px 50px",
                 gap: props.mobile? "10px" : "20px",
                 alignItems: "center",
                 backgroundColor: "secondary.main",
                 '& a': {
                     textDecoration: "none",
                     color: "inherit"
-                }
+                },
             }}>
             <Link
                 href='/'
@@ -122,9 +122,9 @@ export default function Navbar(props: {
                     open={Boolean(anchorElUser)}
                     onClose={handleCloseUserMenu}
                 >
-                    <MenuItem key="settings" onClick={logout}>
+                    {/* <MenuItem key="settings" onClick={logout}>
                         <Typography textAlign="center">settings</Typography>
-                    </MenuItem>
+                    </MenuItem> */}
                     <MenuItem key="logout" onClick={logout}>
                         <Typography textAlign="center">logout</Typography>
                     </MenuItem>

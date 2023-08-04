@@ -90,6 +90,7 @@ public class ObservationService {
         }
         savedObservation.setValue(updatedEntity.getValue());
         savedObservation.setNote(updatedEntity.getNote());
+        savedObservation.setTracker(updatedEntity.getTracker());
         return observationRepository.save(savedObservation);
     }
 

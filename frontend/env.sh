@@ -17,7 +17,7 @@ do
     varValue=$(printf '%s\n' "$line" | sed -e 's/^[^=]*=//')
   fi
 
-  echo "config $varname value..."
+  echo "config $varName value..."
   # Read value of current variable if exists as Environment variable
   globalVarValue=$(printf '%s\n' "${!varName}")
   if [ ! -z $globalVarValue ]; then

@@ -19,7 +19,7 @@ const ColorModeContext = React.createContext({ toggleColorMode: () => { } });
 
 export function App() {
   const isLoggedIn: () => boolean = () => secureLocalStorage.getItem("tracky-key") != null;
-  const backendURL = window._env_.REACT_APP_API_URL != null ? window._env_.REACT_APP_API_URL : "http://localhost:8085/api";
+  const backendURL = window._env_.API_URL != null ? window._env_.API_URL : "http://localhost:8085/api";
   const axiosReq = axios.create({
     baseURL: backendURL,
     timeout: 1000

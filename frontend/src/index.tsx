@@ -7,7 +7,7 @@ import reportWebVitals from './reportWebVitals';
 declare global {
   interface Window {
     _env_: {
-      REACT_APP_API_URL: string
+      API_URL: string
     }
   }
 }
