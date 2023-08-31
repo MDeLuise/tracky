@@ -86,7 +86,7 @@ Run the docker compose file (`docker compose -f <file> up -d`), then the service
 
   <summary>Run on a remote host</summary>
 
-  Please notice that running the `docker-compose` file from another machine change the way to connect to the server. For example, if you run the `docker-compose` on the machine with the local IP `192.168.1.100` then you have to change the backend url in the [API_URL](#configurations) variable to `http://192.168.1.100:8080/api`. In this case, the frontend of the system will be available at `http://192.168.1.100:8080`, and the backend will be available at `http://192.168.1.100:8080/api`.
+  Please notice that running the `docker-compose` file from another machine change the way to connect to the server. For example, if you run the `docker-compose` on the machine with the local IP `192.168.1.100` then you have to change the backend url in the [API_URL](#configuration) variable to `http://192.168.1.100:8080/api`. In this case, the frontend of the system will be available at `http://192.168.1.100:8080`, and the backend will be available at `http://192.168.1.100:8080/api`.
 </details>
 
 ### Setup without docker
