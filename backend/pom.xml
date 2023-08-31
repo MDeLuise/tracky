@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.github.mdeluise</groupId>
     <artifactId>tracky</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.0</version>
     <name>Tracky</name>
     <description>Self-hosted, open source tracker service/description</description>
     <properties>
